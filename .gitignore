@@ -1,0 +1,13 @@
+node_modules
+dist
+
+server/images/*.jpg
+server/images/*.jpeg
+server/images/*.png
+server/images/*.gif
+server/images/*.bmp
+server/images/*.svg
+
+!server/images/guest.png
+
+.env
