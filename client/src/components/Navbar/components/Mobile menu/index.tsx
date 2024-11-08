@@ -7,7 +7,7 @@ import { useAuthStore } from 'store'
 import { Filters } from 'components/shared'
 import { Portal } from 'components/ui'
 
-import { ListCar, LogOut, MyListings, SignIn } from './components'
+import { ListHome, LogOut, MyListings, SignIn } from './components'
 
 const Menu = () => {
 	const { user } = useAuthStore()
@@ -38,7 +38,7 @@ const Menu = () => {
 
 						<div className="mt-4 text-white" onClick={toggleMenu}>
 							<MyListings />
-							<ListCar />
+							<ListHome />
 							{user ? <LogOut /> : <SignIn />}
 						</div>
 

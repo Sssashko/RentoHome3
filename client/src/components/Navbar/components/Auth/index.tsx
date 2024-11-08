@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useAuthStore } from 'store'
 
-import { ListCar, LogOut, MyListings } from './components'
+import { ListHome, LogOut, MyListings, ProfilePage } from './components'
 
 const Auth = () => {
 	const { user } = useAuthStore()
@@ -26,8 +26,9 @@ const Auth = () => {
 				leaveTo="opacity-0 scale-90 -translate-y-4"
 			>
 				<Menu.Items className="absolute right-16 top-14 z-[1] rounded-md bg-neutral-600 py-2 text-white">
+					<ProfilePage/>
 					<MyListings />
-					<ListCar />
+					<ListHome />
 					<LogOut />
 				</Menu.Items>
 			</Transition>

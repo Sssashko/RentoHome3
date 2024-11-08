@@ -3,14 +3,15 @@ interface PriceRange {
 	maximum?: number
 }
 
-interface Transmissions {
-	automatic: boolean
-	manual: boolean
+interface Countries {
+	latvia: boolean
+	estonia: boolean
 }
 
-interface Types {
-	fuel: boolean
-	electric: boolean
+interface Classes {
+	budget: boolean
+	medium: boolean
+	premium: boolean
 }
 
-export { PriceRange, Transmissions, Types }
+export { PriceRange, Countries, Classes }

@@ -1,4 +1,4 @@
-import { CarPreview, CreateListing, Listings, LogIn, MyListings, PageNotFound, SignUp } from 'pages'
+import { CarPreview, CreateListing, Listings, LogIn, MyListings, PageNotFound, SignUp, ProfilePage } from 'pages'
 import { Route, Routes } from 'react-router-dom'
 
 const AppRoutes = () => (
@@ -13,7 +13,9 @@ const AppRoutes = () => (
 
 		<Route path="/mylistings" element={<MyListings />} />
 		<Route path="/listcar" element={<CreateListing />} />
+		<Route path="/ProfilePage" element={<ProfilePage avatarUrl='' bio='' followers={1} following={1} name='' posts={1}  />} />
 		<Route path="/*" element={<PageNotFound />} />
+
 	</Routes>
 )
 

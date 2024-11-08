@@ -6,7 +6,7 @@ const Cars = () => {
 
 	return !cars.length ? (
 		<h1 className="mx-auto mt-20 p-8 text-center text-4xl font-semibold text-white">
-			No cars matching your queries found!
+			No homes matching your queries found!
 		</h1>
 	) : (
 		<div className="flex flex-wrap justify-center gap-5 p-8">

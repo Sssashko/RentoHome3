@@ -1,15 +1,16 @@
 import { Menu } from '@headlessui/react'
-import { FaHome } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 import { NavLink } from 'react-router-dom'
+
 
 const MyListings = () => (
 	<Menu.Item>
 		<NavLink
-			to="/mylistings"
+			to="/ProfilePage"
 			className="my-0.5 flex cursor-pointer items-center gap-2 px-6 py-px hover:bg-neutral-500"
 		>
-			<FaHome size={25} color="white" />
-			<h2 className="text-lg font-semibold">My listings</h2>
+			<CgProfile size={25} color="white" />
+			<h2 className="text-lg font-semibold">Profile Page</h2>
 		</NavLink>
 	</Menu.Item>
 )

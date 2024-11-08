@@ -1,8 +1,8 @@
 import { Image } from 'types'
 
 interface Payload {
-	transmission: string
-	type: string
+	country: string
+	class: string
 	model: string
 	year: number
 	price: number

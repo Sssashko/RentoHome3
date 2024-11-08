@@ -1,11 +1,11 @@
-import { Make, Price, Transmission, Type } from './components'
+import { Make, Price, Country, Class } from './components'
 
 const Filters = () => (
 	<>
 		<Make />
 		<Price />
-		<Transmission />
-		<Type />
+		<Country />
+		<Class />
 	</>
 )
 

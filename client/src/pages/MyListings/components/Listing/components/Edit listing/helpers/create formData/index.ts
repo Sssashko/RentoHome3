@@ -4,8 +4,8 @@ interface Payload {
 	year: number
 	power: string
 	price: number
-	type: string
-	transmission: string
+	class: string
+	country: string
 	description: string
 }
 

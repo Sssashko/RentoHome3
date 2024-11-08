@@ -7,8 +7,8 @@ const updateCar = async ({
 	year,
 	price,
 	power,
-	type,
-	transmission,
+	class: carClass, // Renamed `class` to `carClass`
+	country,
 	description
 }: Car) => {
 	const sql = `
@@ -23,7 +23,7 @@ const updateCar = async ({
         description = ?
     WHERE id = ?
     `
-	await pool.query(sql, [model, year, price, power, type, transmission, description, id])
+	await pool.query(sql, [model, year, price, power, carClass, country, description, id]) // Use `carClass` here
 }
 
 export default updateCar

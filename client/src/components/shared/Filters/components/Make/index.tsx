@@ -2,38 +2,39 @@ import { useFiltersStore } from 'store'
 
 import { CheckBox } from 'components/ui'
 
-const allMakes = ['bmw', 'porche', 'mercedes']
+const allTypes = ['apartament', 'house'] 
 
-const Make = () => {
-	const { makes, applyMakeFilter, unApplyMakeFilter } = useFiltersStore()
+const TypeFilter = () => { 
+	const { types, applyTypeFilter, unApplyTypeFilter } = useFiltersStore() 
+
 	return (
 		<>
 			<h2 className="mx-auto mt-5 text-4xl font-semibold text-white md:mt-4 md:text-2xl">
-				Make
+				Type {}
 			</h2>
 			<div className="mt-4">
 				<div
 					className="flex cursor-pointer items-center gap-2"
-					onClick={() => makes.forEach((make) => unApplyMakeFilter(make))}
+					onClick={() => types.forEach((type) => unApplyTypeFilter(type))} 
 				>
-					<CheckBox active={makes.length === 0} />
+					<CheckBox active={types.length === 0} /> 
 					<h2 className="font-semibold text-white md:text-sm">ALL</h2>
 				</div>
-				{allMakes.map((make) => (
+				{allTypes.map((type) => ( 
 					<div
 						className="mt-2.5 flex cursor-pointer items-center gap-2"
 						onClick={() => {
-							if (makes.includes(make)) {
-								unApplyMakeFilter(make)
+							if (types.includes(type)) { 
+								unApplyTypeFilter(type) 
 							} else {
-								applyMakeFilter(make)
+								applyTypeFilter(type) 
 							}
 						}}
-						key={make}
+						key={type}
 					>
-						<CheckBox active={makes.includes(make)} />
+						<CheckBox active={types.includes(type)} /> 
 						<h2 className="font-semibold text-white md:text-sm">
-							{make.toUpperCase()}
+							{type.toUpperCase()}
 						</h2>
 					</div>
 				))}
@@ -41,4 +42,4 @@ const Make = () => {
 		</>
 	)
 }
-export default Make
+export default TypeFilter

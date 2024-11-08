@@ -13,7 +13,7 @@ const CarPreview = () => {
 	const [currentImage, setCurrentImage] = useState(0)
 	const [previewImage, setPreviewImage] = useState<null | string>(null)
 
-	const car = cars.find((car) => car.id === Number(id))
+	const car = id ? cars.find((car) => car.id === Number(id)) : null;
 
 	if (!car) return <PageNotFound />
 
@@ -21,8 +21,8 @@ const CarPreview = () => {
 		model,
 		price,
 		power,
-		transmission,
-		type,
+		country,
+		class: carClass, // Renamed to avoid keyword conflict
 		description,
 		images,
 		user: { username, email, avatar }
@@ -41,11 +41,13 @@ const CarPreview = () => {
 						onClick={prevImage}
 					/>
 
-					<img
-						src={images[currentImage].url}
-						onClick={() => setPreviewImage(images[currentImage].url)}
-						className="aspect-video w-full rounded-lg object-cover"
-					/>
+					{images.length > 0 && (
+						<img
+							src={images[currentImage].url}
+							onClick={() => setPreviewImage(images[currentImage].url)}
+							className="aspect-video w-full rounded-lg object-cover"
+						/>
+					)}
 
 					<FcNext
 						size={35}
@@ -56,13 +58,13 @@ const CarPreview = () => {
 
 				<div className="mt-1 flex justify-between text-lg font-bold xl:mt-2 xl:text-xl 2xl:text-2xl">
 					<h2>{model}</h2>
-					<h3>${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}</h3>
+					<h3>${price.toLocaleString()}</h3>
 				</div>
 
 				<div className="mt-2 text-lg font-medium xl:text-xl 2xl:text-2xl">
-					<p>Transmission: {transmission}</p>
+					<p>Country: {country}</p>
 					<p>Power: {power}</p>
-					<p>Type: {type}</p>
+					<p>Class: {carClass}</p>
 				</div>
 
 				<p className="mt-2 xl:text-lg 2xl:text-xl">{description}</p>
@@ -73,7 +75,7 @@ const CarPreview = () => {
 							src={image.url}
 							className="aspect-video w-[144px] cursor-pointer rounded-lg object-cover md:w-[190px]"
 							onClick={() => setCurrentImage(index)}
-							key={image.originalName}
+							key={image.originalName || index}
 						/>
 					))}
 				</div>

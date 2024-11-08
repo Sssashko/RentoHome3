@@ -3,7 +3,7 @@ import { ResultSetHeader } from 'mysql2'
 import { Car } from 'types'
 
 const createCar = async (
-	{ model, year, price, power, type, transmission, description }: Car,
+	{ model, year, price, power, class: carClass, country, description }: Car, // Renamed `class` to `carClass`
 	user: number
 ) => {
 	const sql = `
@@ -16,8 +16,8 @@ const createCar = async (
 		year,
 		price,
 		power,
-		type,
-		transmission,
+		carClass, // Use `carClass` here
+		country,
 		description,
 		user
 	])

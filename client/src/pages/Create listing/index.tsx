@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useCarsStore } from 'store'
-import { Image, Transmission, Type } from 'types'
+import { Image, Country, Class } from 'types'
 
 import { ProtectedPage } from 'components/shared'
-import { ImagesInput, TransmissionSelector, TypeSelector } from 'components/shared/Car form'
+import { ImagesInput, CountrySelector, ClassSelector } from 'components/shared/Car form'
 
 import { createFormData } from './helpers'
 
@@ -25,8 +25,8 @@ const CreateListing = () => {
 	const createProtectedRequest = useCreateProtectedRequest()
 	const { createCar } = useCarsStore()
 
-	const [transmission, setTransmission] = useState<Transmission>('automatic')
-	const [type, setType] = useState<Type>('fuel')
+	const [country, setCountry] = useState<Country>('latvia')
+	const [carClass, setCarClass] = useState<Class>('budget') // Renamed from `class` to `carClass`
 	const [images, setImages] = useState<(Image | File)[]>([])
 
 	const [loading, setLoading] = useState(false)
@@ -42,7 +42,7 @@ const CreateListing = () => {
 
 		const year = Number(data.year)
 		const price = Number(data.price)
-		const car = { ...data, year, price, transmission, type }
+		const car = { ...data, year, price, country, class: carClass } // Changed `class` to `carClass`
 
 		const formData = createFormData(car, images)
 
@@ -110,11 +110,11 @@ const CreateListing = () => {
 						</div>
 					</div>
 
-					<TransmissionSelector
-						transmission={transmission}
-						switchTransmission={setTransmission}
+					<CountrySelector
+						country={country}
+						switchCountry={setCountry}
 					/>
-					<TypeSelector type={type} switchType={setType} />
+					<ClassSelector selectedClass={carClass} switchClass={setCarClass} /> {/* Updated prop to `carClass` */}
 
 					<div className="mt-5">
 						<input

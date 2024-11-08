@@ -1,60 +1,61 @@
-import { Transmission, Type } from 'types'
+import { Country, Class } from 'types'
 import { create } from 'zustand'
 
-import { PriceRange, Transmissions, Types } from './types'
+import { PriceRange, Countries, Classes } from './types'
 
 interface Filters {
-	makes: string[]
+	types: string[] // Renamed `makes` to `types`
 	priceRange: PriceRange
-	transmissions: Transmissions
-	types: Types
+	countries: Countries
+	classes: Classes
 
-	applyMakeFilter: (make: string) => void
-	unApplyMakeFilter: (make: string) => void
+	applyTypeFilter: (type: string) => void // Renamed `applyMakeFilter` to `applyTypeFilter`
+	unApplyTypeFilter: (type: string) => void // Renamed `unApplyMakeFilter` to `unApplyTypeFilter`
 
-	switchTransition: (transmission: Transmission) => void
-	switchType: (type: Type) => void
+	switchTransition: (country: Country) => void
+	switchClass: (classType: Class) => void
 
 	setPriceFilters: (priceRange: PriceRange) => void
 }
 
 const useFiltersStore = create<Filters>()((set) => ({
-	makes: [],
+	types: [], // Renamed `makes` to `types`
 	priceRange: {},
-	transmissions: {
-		automatic: true,
-		manual: true
+	countries: {
+		latvia: true,
+		estonia: true
 	},
-	types: {
-		fuel: true,
-		electric: true
+	classes: {
+		budget: true,
+		medium: true,
+		premium: true
 	},
-	applyMakeFilter: (item) => {
+	applyTypeFilter: (item) => { // Renamed `applyMakeFilter` to `applyTypeFilter`
 		set((state) => {
-			const { makes } = state
-			makes.push(item)
-			return { ...state, makes }
+			const { types } = state
+			types.push(item)
+			return { ...state, types }
 		})
 	},
-	unApplyMakeFilter: (item) => {
+	unApplyTypeFilter: (item) => { // Renamed `unApplyMakeFilter` to `unApplyTypeFilter`
 		set((state) => {
-			const makes = state.makes.filter((element) => element !== item)
-			return { ...state, makes }
+			const types = state.types.filter((element) => element !== item)
+			return { ...state, types }
 		})
 	},
 
-	switchTransition: (transmission) => {
+	switchTransition: (country) => {
 		set((state) => {
-			const { transmissions } = state
-			transmissions[transmission] = !transmissions[transmission]
-			return { ...state, transmissions }
+			const { countries } = state
+			countries[country] = !countries[country]
+			return { ...state, countries }
 		})
 	},
-	switchType: (type) => {
+	switchClass: (classType) => { // Renamed parameter from `class` to `classType`
 		set((state) => {
-			const { types } = state
-			types[type] = !types[type]
-			return { ...state, types }
+			const classes = { ...state.classes }
+			classes[classType] = !classes[classType]
+			return { ...state, classes }
 		})
 	},
 	setPriceFilters: (priceRange) => {

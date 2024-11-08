@@ -7,7 +7,7 @@ import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { useCarsStore } from 'store'
 import { Car, Image } from 'types'
 
-import { ImagesInput, TransmissionSelector, TypeSelector } from 'components/shared/Car form'
+import { ImagesInput, CountrySelector, ClassSelector } from 'components/shared/Car form'
 
 import { carIsModified, createFormData, getRemovedImages } from './helpers'
 
@@ -27,8 +27,8 @@ const EditListing = ({ closeModal, ...car }: Props) => {
 		year: initialYear,
 		power: initialPower,
 		price: initialPrice,
-		type: initialType,
-		transmission: initialTransmission,
+		class: initialClass,
+		country: initialCountry,
 		description: initialDescription,
 		images: initialImages
 	} = car
@@ -38,8 +38,8 @@ const EditListing = ({ closeModal, ...car }: Props) => {
 	const [loading, setLoading] = useState(false)
 
 	const [images, setImages] = useState<(Image | File)[]>(initialImages)
-	const [transmission, setTransmission] = useState(initialTransmission)
-	const [type, setType] = useState(initialType)
+	const [country, setCountry] = useState(initialCountry)
+	const [carClass, setCarClass] = useState(initialClass) // Renamed from `type` to `carClass`
 
 	const createProtectedRequest = useCreateProtectedRequest()
 
@@ -53,7 +53,8 @@ const EditListing = ({ closeModal, ...car }: Props) => {
 		const year = Number(data.year)
 		const price = Number(data.price)
 
-		const modifiedCar = { ...car, ...data, year, price, type, transmission }
+		// Use `carClass` instead of `class` to avoid reserved keyword conflict
+		const modifiedCar = { ...car, ...data, year, price, class: carClass, country }
 
 		if (!carIsModified(car, { ...modifiedCar, images })) {
 			return toast.error('There are no modifications!')
@@ -136,11 +137,12 @@ const EditListing = ({ closeModal, ...car }: Props) => {
 					</div>
 				</div>
 
-				<TransmissionSelector
-					transmission={transmission}
-					switchTransmission={setTransmission}
+				<CountrySelector
+					country={country}
+					switchCountry={setCountry}
 				/>
-				<TypeSelector type={type} switchType={setType} />
+				<ClassSelector selectedClass={carClass} switchClass={setCarClass} /> {/* Use carClass here */}
+
 
 				<div className='mt-5'>
 					<input

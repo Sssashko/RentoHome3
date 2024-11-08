@@ -1,5 +1,5 @@
-type Transmission = 'manual' | 'automatic'
-type Type = 'fuel' | 'electric'
+type Country = 'latvia' | 'estonia'
+type Class = 'budget' | 'medium' | 'premium' 
 
 interface Car {
 	id: number
@@ -7,8 +7,8 @@ interface Car {
 	year: number
 	price: number
 	power: string
-	type: Type
-	transmission: Transmission
+	class: Class
+	country: Country
 	description: string
 	user: User
 	images: Image[]

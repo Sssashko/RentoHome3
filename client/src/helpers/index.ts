@@ -1,1 +1,1 @@
-export { makeFilter, priceFilter, transmissionFilter, typeFilter } from './filters'
+export { typeFilter, priceFilter, countryFilter, classFilter } from './filters'

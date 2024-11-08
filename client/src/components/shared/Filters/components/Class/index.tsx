@@ -3,15 +3,15 @@ import { Class } from 'types'
 
 import { CheckBox } from 'components/ui'
 
-const typesArray: Class[] = ['budget', 'medium', 'premium']
+const typesArray: Class[] = ['budget', 'medium',  'premium']
 
-const TypeSelect = () => {
+const ClassSelect = () => {
 	const { classes, switchClass } = useFiltersStore()
 
 	return (
 		<>
 			<h2 className="mx-auto mt-5 text-4xl font-semibold text-white md:mt-4 md:text-2xl">
-				Type
+				Class
 			</h2>
 			<div className="mt-2 w-28">
 				{typesArray.map((type) => (
@@ -31,4 +31,4 @@ const TypeSelect = () => {
 	)
 }
 
-export default TypeSelect
+export default ClassSelect

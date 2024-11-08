@@ -15,8 +15,8 @@ CREATE TABLE cars (
     year INT NOT NULL,
     price INT NOT NULL,
     power VARCHAR(10) NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    transmission VARCHAR(50) NOT NULL,
+    class VARCHAR(50) NOT NULL,
+    country VARCHAR(50) NOT NULL,
     description TEXT NOT NULL,
     user INT NOT NULL,
     FOREIGN KEY (user) REFERENCES users(id)

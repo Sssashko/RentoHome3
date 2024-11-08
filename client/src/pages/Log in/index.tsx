@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from 'store'
-
 import { GoogleSignIn } from 'components/shared'
 
 type Data = {
@@ -27,7 +26,7 @@ const LogIn = () => {
 			loading: 'Logging in...',
 			success: (user) => {
 				setUser(user)
-				navigate('/')
+				navigate('/ProfilePage')
 				return `Successfully logged in as ${user.username}`
 			},
 			error: (e) => {
