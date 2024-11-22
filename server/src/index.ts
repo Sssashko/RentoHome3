@@ -4,7 +4,7 @@ import cors from 'cors'
 import express, { json } from 'express'
 import { passport } from 'middleware'
 import { join } from 'path'
-import { authRouter, carsRouter, healthRouter } from 'routes'
+import { authRouter, homesRouter, healthRouter } from 'routes'
 
 const app = express()
 
@@ -17,7 +17,7 @@ app.use(passport.initialize())
 app.use('/images', express.static(join(__dirname, '..', 'images')))
 
 app.use('/health', healthRouter)
-app.use('/cars', carsRouter)
+app.use('/homes', homesRouter)
 app.use('/auth', authRouter)
 
 app.use('/', (req, res) => {

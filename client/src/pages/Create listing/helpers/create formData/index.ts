@@ -3,16 +3,15 @@ import { Image } from 'types'
 interface Payload {
 	country: string
 	class: string
-	model: string
+	square: string
 	year: number
 	price: number
-	power: string
 	description: string
 }
 
 const createFormData = (data: Payload, images: (Image | File)[]) => {
 	const formData = new FormData()
-	formData.append('car', JSON.stringify(data))
+	formData.append('home', JSON.stringify(data))
 
 	images.forEach((item) => {
 		if (item instanceof File) {

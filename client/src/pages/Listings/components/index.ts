@@ -1,2 +1,2 @@
-export { default as Cars } from './Cars'
+export { default as Homes } from './Homes'
 export { default as Filters } from './Filters'

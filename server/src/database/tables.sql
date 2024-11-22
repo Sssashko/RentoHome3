@@ -1,4 +1,4 @@
-CREATE DATABASE carmarket DEFAULT CHARACTER SET utf8;
+CREATE DATABASE rentohome DEFAULT CHARACTER SET utf8;
 
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -9,13 +9,13 @@ CREATE TABLE users (
     google_id VARCHAR(255) UNIQUE
 );
 
-CREATE TABLE cars (
+CREATE TABLE homes (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    model VARCHAR(255) NOT NULL,
     year INT NOT NULL,
     price INT NOT NULL,
-    power VARCHAR(10) NOT NULL,
+    square VARCHAR(10) NOT NULL,
     class VARCHAR(50) NOT NULL,
+    type VARCHAR(50) NOT NULL,
     country VARCHAR(50) NOT NULL,
     description TEXT NOT NULL,
     user INT NOT NULL,
@@ -27,8 +27,8 @@ CREATE TABLE images (
     name VARCHAR(255) NOT NULL,
     originalName VARCHAR(255) NOT NULL,
     url VARCHAR(255) NOT NULL,
-    car INT NOT NULL,
-    FOREIGN KEY (car) REFERENCES cars(id)
+    home INT NOT NULL,
+    FOREIGN KEY (home) REFERENCES homes(id)
 );
 
 CREATE TABLE refreshTokens (

@@ -1,67 +1,74 @@
-import { Country, Class } from 'types'
+import { Type, Country, Class } from 'types'
 import { create } from 'zustand'
 
-import { PriceRange, Countries, Classes } from './types'
+import { PriceRange, Types, Countries, Classes } from './types'
 
 interface Filters {
-	types: string[] // Renamed `makes` to `types`
+	types: Types
 	priceRange: PriceRange
 	countries: Countries
 	classes: Classes
 
-	applyTypeFilter: (type: string) => void // Renamed `applyMakeFilter` to `applyTypeFilter`
-	unApplyTypeFilter: (type: string) => void // Renamed `unApplyMakeFilter` to `unApplyTypeFilter`
-
+	switchType: (type: Type) => void 
 	switchTransition: (country: Country) => void
 	switchClass: (classType: Class) => void
-
 	setPriceFilters: (priceRange: PriceRange) => void
 }
 
 const useFiltersStore = create<Filters>()((set) => ({
-	types: [], // Renamed `makes` to `types`
-	priceRange: {},
+	types: {
+		Apartament: true,
+		House: true
+	},
+	priceRange: {
+		minimum: 0,  
+		maximum: 0
+	},
 	countries: {
-		latvia: true,
-		estonia: true
+		Latvia: true,
+		Estonia: true
 	},
 	classes: {
-		budget: true,
-		medium: true,
-		premium: true
+		Budget: true,
+		Medium: true,
+		Premium: true
 	},
-	applyTypeFilter: (item) => { // Renamed `applyMakeFilter` to `applyTypeFilter`
+	switchType: (type: Type) => {
 		set((state) => {
-			const { types } = state
-			types.push(item)
+			const types = { ...state.types }
+			types[type] = !types[type] 
 			return { ...state, types }
 		})
 	},
-	unApplyTypeFilter: (item) => { // Renamed `unApplyMakeFilter` to `unApplyTypeFilter`
+	switchTransition: (country: Country) => {
 		set((state) => {
-			const types = state.types.filter((element) => element !== item)
-			return { ...state, types }
+			return { 
+				...state, 
+				countries: { 
+					...state.countries, 
+					[country]: !state.countries[country] 
+				} 
+			}
 		})
 	},
-
-	switchTransition: (country) => {
+	switchClass: (classType: Class) => { 
 		set((state) => {
-			const { countries } = state
-			countries[country] = !countries[country]
-			return { ...state, countries }
+			return { 
+				...state, 
+				classes: { 
+					...state.classes, 
+					[classType]: !state.classes[classType] 
+				} 
+			}
 		})
 	},
-	switchClass: (classType) => { // Renamed parameter from `class` to `classType`
-		set((state) => {
-			const classes = { ...state.classes }
-			classes[classType] = !classes[classType]
-			return { ...state, classes }
-		})
-	},
-	setPriceFilters: (priceRange) => {
+	setPriceFilters: (priceRange: PriceRange) => {
 		set((state) => ({
 			...state,
-			priceRange: { ...state.priceRange, ...priceRange }
+			priceRange: { 
+				...state.priceRange, 
+				...priceRange 
+			}
 		}))
 	}
 }))

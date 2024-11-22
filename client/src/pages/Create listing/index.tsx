@@ -1,89 +1,78 @@
-import { createCarQuery } from 'api/cars'
-import { useCreateProtectedRequest } from 'hooks'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
-import { useCarsStore } from 'store'
-import { Image, Country, Class } from 'types'
+import { createHomeQuery } from 'api/homes';
+import { useCreateProtectedRequest } from 'hooks';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { useHomesStore } from 'store';
+import { Image, Country, Class, Type } from 'types';
 
-import { ProtectedPage } from 'components/shared'
-import { ImagesInput, CountrySelector, ClassSelector } from 'components/shared/Car form'
+import { ProtectedPage } from 'components/shared';
+import { ImagesInput, TypeSelector, CountrySelector, ClassSelector } from 'components/shared/Home form';
 
-import { createFormData } from './helpers'
+import { createFormData } from './helpers';
 
 type Data = {
-	model: string
-	year: string
-	price: string
-	power: string
-	description: string
-}
+	year: string;
+	square: string;
+	price: string;
+	description: string;
+};
 
 const CreateListing = () => {
-	const navigate = useNavigate()
-	const createProtectedRequest = useCreateProtectedRequest()
-	const { createCar } = useCarsStore()
+	const navigate = useNavigate();
+	const createProtectedRequest = useCreateProtectedRequest();
+	const { createHome } = useHomesStore();
 
-	const [country, setCountry] = useState<Country>('latvia')
-	const [carClass, setCarClass] = useState<Class>('budget') // Renamed from `class` to `carClass`
-	const [images, setImages] = useState<(Image | File)[]>([])
+	const [country, setCountry] = useState<Country>('Latvia');
+	const [homeClass, setHomeClass] = useState<Class>('Budget');
+	const [homeType, setHomeType] = useState<Type>('Apartament');
+	const [images, setImages] = useState<(Image | File)[]>([]);
 
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(false);
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors }
-	} = useForm<Data>()
+		formState: { errors },
+	} = useForm<Data>();
 
 	const submit = async (data: Data) => {
-		setLoading(true)
+		setLoading(true);
 
-		const year = Number(data.year)
-		const price = Number(data.price)
-		const car = { ...data, year, price, country, class: carClass } // Changed `class` to `carClass`
+		const year = Number(data.year);
+		const price = Number(data.price);
+		const square = String(data.square);
 
-		const formData = createFormData(car, images)
+		const homeListing = { ...data, year, price, square, country, class: homeClass, type: homeType };
 
-		const postCar = createProtectedRequest({
-			requestQuery: async () => await createCarQuery(formData),
-			callback: createCar
-		})
+		const formData = createFormData(homeListing, images);
 
-		await toast.promise(postCar(), {
-			success: 'Car has been listed',
+		const postHome = createProtectedRequest({
+			requestQuery: async () => await createHomeQuery(formData),
+			callback: createHome,
+		});
+
+		await toast.promise(postHome(), {
+			success: 'Home has been listed',
 			loading: 'Creating listing...',
-			error: 'Error while creating listing'
-		})
+			error: 'Error while creating listing',
+		});
 
-		setLoading(false)
-		navigate('/')
-	}
+		setLoading(false);
+		navigate('/');
+	};
 
 	return (
 		<ProtectedPage>
-			<div className="mx-auto my-5 flex h-full w-full items-center justify-center">
+			<div className="mx-auto my-5 flex h-full w-full items-center justify-center px-4 md:px-0">
 				<form
-					className="scrollbar h-fit w-11/12 rounded-lg bg-neutral-700 px-8 py-8 text-white sm:px-14 md:w-[700px] md:py-10 lg:w-[800px] lg:px-24"
+					className="scrollbar h-fit w-full max-w-md rounded-lg bg-neutral-700 px-6 py-8 text-white sm:px-10 md:max-w-xl lg:max-w-2xl lg:px-16"
 					onSubmit={handleSubmit(submit)}
 					onClick={(e) => e.stopPropagation()}
 				>
-					<div>
-						<input
-							type="text"
-							{...register('model', { required: true })}
-							className={`h-12 w-full rounded border-2 bg-transparent text-center font-semibold transition duration-200 focus:outline-none ${
-								errors['model'] ? 'border-red-500' : 'border-[#858585]'
-							}`}
-						/>
-						<h3 className="mt-1 text-center text-sm font-bold text-[#858585]">
-							Make & Model
-						</h3>
-					</div>
-
-					<div className="mt-2 flex w-full justify-between">
-						<div className="w-[45%]">
+					<div className="mt-2 flex flex-col gap-4 md:flex-row md:gap-6">
+						<div className="w-full md:w-1/2">
 							<input
 								type="number"
 								{...register('year', { required: true })}
@@ -91,30 +80,35 @@ const CreateListing = () => {
 									errors['year'] ? 'border-red-500' : 'border-[#858585]'
 								}`}
 							/>
-							<h3 className="mt-1 text-center text-sm font-bold text-[#858585]">
-								Year
-							</h3>
+							<h3 className="mt-2 text-center text-sm font-bold text-[#858585]">Year</h3>
 						</div>
 
-						<div className="w-[45%]">
+						<div className="w-full md:w-1/2">
 							<input
-								type="text"
-								{...register('power', { required: true })}
+								type="number"
+								{...register('square', { required: true })}
 								className={`h-12 w-full rounded border-2 bg-transparent text-center font-semibold transition duration-200 focus:outline-none ${
-									errors['power'] ? 'border-red-500' : 'border-[#858585]'
+									errors['square'] ? 'border-red-500' : 'border-[#858585]'
 								}`}
 							/>
-							<h3 className="mt-1 text-center text-sm font-bold text-[#858585]">
-								Power
-							</h3>
+							<h3 className="mt-2 text-center text-sm font-bold text-[#858585]">Square Footage</h3>
 						</div>
 					</div>
 
-					<CountrySelector
-						country={country}
-						switchCountry={setCountry}
-					/>
-					<ClassSelector selectedClass={carClass} switchClass={setCarClass} /> {/* Updated prop to `carClass` */}
+					<div className="mt-6">
+						<TypeSelector selectedType={homeType} switchType={setHomeType} className="gap-1" />
+						<h3 className="text-center text-sm font-bold text-[#858585]">Type</h3>
+					</div>
+
+					<div className="mt-6">
+						<CountrySelector country={country} switchCountry={setCountry} />
+						<h3 className="text-center text-sm font-bold text-[#858585]">Country</h3>
+					</div>
+
+					<div className="mt-6">
+						<ClassSelector selectedClass={homeClass} switchClass={setHomeClass} className="gap-1" />
+						<h3 className="text-center text-sm font-bold text-[#858585] mt-5">Class</h3>
+					</div>
 
 					<div className="mt-5">
 						<input
@@ -124,27 +118,26 @@ const CreateListing = () => {
 								errors['price'] ? 'border-red-500' : 'border-[#858585]'
 							}`}
 						/>
-						<h3 className="mt-1 text-center text-sm font-bold text-[#858585]">
-							Price ($)
-						</h3>
+						<h3 className="mt-2 text-center text-sm font-bold text-[#858585]">Price ($)</h3>
 					</div>
 
-					<div className="mt-3">
+					<div className="mt-5">
 						<textarea
 							{...register('description', { required: true })}
 							className={`scrollbar h-36 w-full rounded border-2 bg-transparent px-2 py-1 transition duration-200 focus:outline-none ${
 								errors['description'] ? 'border-red-500' : 'border-[#858585]'
 							}`}
 						/>
-						<h3 className="text-center text-sm font-bold text-[#858585]">
-							Description
-						</h3>
+						<h3 className="mt-2 text-center text-sm font-bold text-[#858585]">Description</h3>
 					</div>
 
-					<ImagesInput images={images} setImages={setImages} />
+					<div className="mt-5">
+						<ImagesInput images={images} setImages={setImages} />
+						<h3 className="mt-2 text-center text-sm font-bold text-[#858585]">Add Images</h3>
+					</div>
 
 					<button
-						className={`m-auto mt-5 block h-12 w-56 rounded-md bg-green-600 font-semibold transition duration-200 sm:w-72 ${
+						className={`m-auto mt-5 block h-12 w-full max-w-sm rounded-md bg-green-600 font-semibold transition duration-200 sm:w-72 ${
 							loading ? 'pointer-events-none opacity-70' : 'hover:bg-opacity-90'
 						}`}
 						type="submit"
@@ -154,7 +147,7 @@ const CreateListing = () => {
 				</form>
 			</div>
 		</ProtectedPage>
-	)
-}
+	);
+};
 
-export default CreateListing
+export default CreateListing;

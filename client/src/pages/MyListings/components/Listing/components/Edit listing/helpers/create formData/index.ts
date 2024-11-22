@@ -2,7 +2,7 @@ interface Payload {
 	id: number
 	model: string
 	year: number
-	power: string
+	square: string
 	price: number
 	class: string
 	country: string
@@ -12,7 +12,7 @@ interface Payload {
 const createFormData = (data: Payload, images: File[], removedImages: string[]) => {
 	const formData = new FormData()
 
-	formData.append('car', JSON.stringify(data))
+	formData.append('home', JSON.stringify(data))
 
 	images.forEach((item) => {
 		formData.append(`image`, item)

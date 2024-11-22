@@ -1,4 +1,4 @@
-export { default as createCarQuery } from './create car'
-export { default as deleteCarQuery } from './delete car'
-export { default as fetchCarsQuery } from './fetch cars'
-export { default as updateCarQuery } from './update car'
+export { default as createHomeQuery } from './create home'
+export { default as deleteHomeQuery } from './delete home'
+export { default as fetchHomeQuery } from './fetch home'
+export { default as updateHomeQuery } from './update home'

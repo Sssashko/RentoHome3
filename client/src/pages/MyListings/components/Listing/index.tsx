@@ -1,21 +1,23 @@
 import { useState } from 'react'
-import { Car } from 'types'
+import { Home } from 'types'
 
 import { Portal } from 'components/ui'
 
 import { EditListing, Preview } from './components'
 
-const Listing = (car: Car) => {
-	const [editCar, setEditCar] = useState(false)
-	const { id, model, year, price, images } = car
+const Listing = (home: Home) => {
+	const [editHome, setEditHome] = useState(false)
+	const { id, model, year, price, images } = home
 
+	console.log(editHome)
+	
 	return (
 		<>
 			<div
 				className="w-full max-w-[370px] rounded-lg bg-neutral-700 text-white"
 				key={images[0].originalName}
 			>
-				<Preview id={id} image={images[0]} setEditCar={setEditCar} />
+				<Preview id={id} image={images[0]} setEditHome={setEditHome} />
 
 				<div className="mx-4 mb-2 mt-1">
 					<h1 className="text-xl font-semibold">{model}</h1>
@@ -27,9 +29,9 @@ const Listing = (car: Car) => {
 					</div>
 				</div>
 			</div>
-			{editCar && (
+			{editHome && (
 				<Portal>
-					<EditListing {...car} closeModal={() => setEditCar(false)} />
+					<EditListing {...home} closeModal={() => setEditHome(false)} />
 				</Portal>
 			)}
 		</>

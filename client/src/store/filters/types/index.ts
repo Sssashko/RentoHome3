@@ -3,15 +3,20 @@ interface PriceRange {
 	maximum?: number
 }
 
+interface Types {
+	Apartament: boolean
+	House: boolean
+}
+
 interface Countries {
-	latvia: boolean
-	estonia: boolean
+	Latvia: boolean
+	Estonia: boolean
 }
 
 interface Classes {
-	budget: boolean
-	medium: boolean
-	premium: boolean
+	Budget: boolean
+	Medium: boolean
+	Premium: boolean
 }
 
-export { PriceRange, Countries, Classes }
+export { PriceRange, Types, Countries, Classes }

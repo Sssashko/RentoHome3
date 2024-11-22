@@ -1,12 +1,13 @@
-type Country = 'latvia' | 'estonia'
-type Class = 'budget' | 'medium' | 'premium' 
+type Type = 'Apartament' | 'House'
+type Country = 'Latvia' | 'Estonia'
+type Class = 'Budget' | 'Medium' | 'Premium'
 
-interface Car {
+interface Home {
 	id: number
-	model: string
 	year: number
 	price: number
-	power: string
+	square: string
+	type: Type
 	class: Class
 	country: Country
 	description: string
@@ -27,4 +28,4 @@ interface Image {
 	url: string
 }
 
-export { type Car, type Image, type User }
+export { type Home, type Image, type User }

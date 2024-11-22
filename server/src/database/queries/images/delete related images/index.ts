@@ -1,11 +1,11 @@
 import pool from 'database'
 
-const deleteRelatedImages = async (carId: number) => {
+const deleteRelatedImages = async (homeId: number) => {
 	const sql = `
     DELETE FROM images
-    WHERE car = ?
+    WHERE home = ?
     `
-	await pool.query(sql, [carId])
+	await pool.query(sql, [homeId])
 }
 
 export default deleteRelatedImages

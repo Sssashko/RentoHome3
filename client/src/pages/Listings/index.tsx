@@ -1,10 +1,10 @@
-import { Cars, Filters } from './components'
+import { Homes, Filters } from './components'
 
-const CarsPage = () => (
+const HomesPage = () => (
 	<div className="flex items-start">
 		<Filters />
-		<Cars />
+		<Homes />
 	</div>
 )
 
-export default CarsPage
+export default HomesPage

@@ -1,6 +1,6 @@
 services:
-    carmarket-server:
-        container_name: carmarket-server
+    rentohome-server:
+        container_name: rentohome-server
         volumes:
             - ./src:/app/src
             - ./public:/app/public

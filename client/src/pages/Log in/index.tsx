@@ -39,7 +39,7 @@ const LogIn = () => {
 	}
 
 	return (
-		<div className="m-auto">
+		<div className="mt-6 mb-6">
 			<form
 				className="m-auto h-fit min-h-[480px] w-11/12 max-w-[500px] rounded-lg bg-neutral-700 p-10 text-white"
 				onSubmit={handleSubmit(submit)}

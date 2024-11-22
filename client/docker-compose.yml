@@ -1,6 +1,6 @@
 services:
-    carmarket-client:
-        container_name: carmarket-client
+    rentohome-client:
+        container_name: rentohome-client
         volumes:
             - ./src:/app/src
             - ./public:/app/public

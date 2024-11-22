@@ -3,7 +3,7 @@ import { Class } from 'types'
 
 import { CheckBox } from 'components/ui'
 
-const typesArray: Class[] = ['budget', 'medium',  'premium']
+const typesArray: Class[] = ['Budget', 'Medium',  'Premium']
 
 const ClassSelect = () => {
 	const { classes, switchClass } = useFiltersStore()

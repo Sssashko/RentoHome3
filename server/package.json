@@ -30,7 +30,8 @@
     },
     "scripts": {
         "build": "npx tsc && tsc-alias",
-        "start": "npm run build && node dist/index.js",
+        "start": "npm run build && node dist/index.js app.js",
         "dev": "ts-node-dev -r tsconfig-paths/register ./src/index.ts"
+        
     }
 }

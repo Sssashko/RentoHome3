@@ -2,12 +2,12 @@ import { checkAuthQuery } from 'api/auth'
 import { useCreateProtectedRequest } from 'hooks'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAuthStore, useCarsStore } from 'store'
+import { useAuthStore, useHomesStore } from 'store'
 
 import { healthCheck } from './helpers'
 
 const useLoadData = () => {
-	const { fetchCars } = useCarsStore()
+	const { fetchHomes } = useHomesStore()
 	const { setUser } = useAuthStore()
 
 	const [loading, setLoading] = useState(true)
@@ -24,7 +24,7 @@ const useLoadData = () => {
 	const loadData = async () => {
 		if (await healthCheck()) {
 			try {
-				await Promise.all([fetchCars(), fetchUser()])
+				await Promise.all([fetchHomes(), fetchUser()])
 			} catch (error) {
 				toast.error('An error occured while fetching data')
 			}

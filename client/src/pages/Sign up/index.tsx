@@ -53,7 +53,7 @@ const SignUp = () => {
 	}
 
 	return (
-		<div className="m-auto">
+		<div className="mt-6 mb-6">
 			<form
 				className="mx-auto my-4 h-fit min-h-[660px] w-11/12 max-w-[500px] rounded-lg bg-neutral-700 p-10 text-white"
 				onSubmit={handleSubmit(submit)}

@@ -1,11 +1,11 @@
-const typeFilter = (query: string, types: string[]) => {
-	if (!types.length) return true
-	for (let type of types) {
-		if (query.toLowerCase().includes(type.toLowerCase())) {
-			return true
-		}
-	}
-	return false
-}
+import { Types } from 'store/filters/types'
+import { Type } from 'types'
 
+const typeFilter = (type: Type, types: Types) => {
+	if (!types.Apartament && !types.House) {
+		return true
+	} else {
+		return types[type]
+	}
+}
 export default typeFilter
