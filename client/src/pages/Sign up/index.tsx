@@ -5,144 +5,164 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from 'store'
-
 import { GoogleSignIn } from 'components/shared'
 
 type Data = {
-	username: string
-	email: string
-	password: string
-	confirmPassword: string
+  username: string
+  email: string
+  password: string
+  confirmPassword: string
 }
 
 const SignUp = () => {
-	const navigate = useNavigate()
-	const { setUser } = useAuthStore()
-	const [file, setFile] = useState<null | File>()
+  const navigate = useNavigate()
+  const { setUser } = useAuthStore()
+  const [file, setFile] = useState<File | null>(null)
 
-	const {
-		handleSubmit,
-		register,
-		watch,
-		formState: { errors }
-	} = useForm<Data>({ mode: 'onSubmit' })
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors },
+  } = useForm<Data>({ mode: 'onSubmit' })
 
-	const submit = async (data: Data) => {
-		const formData = new FormData()
+  const submit = async (data: Data) => {
+    const formData = new FormData()
+    formData.append('username', data.username)
+    formData.append('email', data.email)
+    formData.append('password', data.password)
+    if (file) formData.append('avatar', file)
 
-		formData.append('username', data.username)
-		formData.append('email', data.email)
-		formData.append('password', data.password)
+    toast.promise(signUpQuery(formData), {
+      loading: 'Signing up..',
+      success: (user) => {
+        setUser(user)
+        navigate('/')
+        return `Successfully signed up as ${user.username}`
+      },
+      error: (e) => {
+        if (isAxiosError(e) && e.response?.status === 409) {
+          return 'User with that email already exists!'
+        }
+        return 'Error while trying to sign up'
+      },
+    })
+  }
 
-		if (file) formData.append('avatar', file)
+  return (
+    <div className="flex items-center justify-center py-10 bg-gray-50">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+        <h1 className="text-3xl font-bold text-center text-gray-800">Create Account</h1>
+        <p className="text-center text-gray-500 mb-6">Sign up to explore more features</p>
 
-		toast.promise(signUpQuery(formData), {
-			loading: 'Signing up..',
-			success: (user) => {
-				setUser(user)
-				navigate('/')
-				return `Successfully signed up as ${user.username}`
-			},
-			error: (e) => {
-				if (isAxiosError(e) && e.response?.status === 409) {
-					return 'User with that email already exists!'
-				}
-				return 'Error while trying to sign up'
-			}
-		})
-	}
+        <form onSubmit={handleSubmit(submit)}>
+          {/* Username */}
+          <div className="mb-5">
+            <input
+              type="text"
+              {...register('username', { required: true, minLength: 3 })}
+              placeholder="Username"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                errors.username ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+          </div>
 
-	return (
-		<div className="mt-6 mb-6">
-			<form
-				className="mx-auto my-4 h-fit min-h-[660px] w-11/12 max-w-[500px] rounded-lg bg-neutral-700 p-10 text-white"
-				onSubmit={handleSubmit(submit)}
-			>
-				<h1 className="text-center text-3xl font-semibold">Create account</h1>
-				<input
-					type="text"
-					{...register('username', { required: true, minLength: 3 })}
-					placeholder="Username"
-					className={`mt-6 w-full border-b-2 border-neutral-500 bg-transparent p-2 transition duration-200 focus:outline-none ${
-						errors['username'] ? 'border-red-500' : ''
-					}`}
-				/>
-				<input
-					type="email"
-					{...register('email', {
-						required: true,
-						validate: (value) =>
-							/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value)
-					})}
-					placeholder="Email"
-					className={`mt-6 w-full border-b-2 border-neutral-500 bg-transparent p-2 transition duration-200 focus:outline-none ${
-						errors['email'] ? 'border-red-500' : ''
-					}`}
-				/>
-				<input
-					type="password"
-					{...register('password', {
-						required: true,
-						minLength: 3,
-						validate: () => watch('password') === watch('confirmPassword')
-					})}
-					placeholder="Password"
-					className={`mt-6 w-full border-b-2 border-neutral-500 bg-transparent p-2 transition duration-200 focus:outline-none ${
-						errors['password'] ? 'border-red-500' : ''
-					}`}
-				/>
-				<input
-					type="password"
-					{...register('confirmPassword', {
-						required: true,
-						minLength: 3,
-						validate: () => watch('password') === watch('confirmPassword')
-					})}
-					placeholder="Confirm password"
-					className={`mt-6 w-full border-b-2 border-neutral-500 bg-transparent p-2 transition duration-200 focus:outline-none ${
-						errors['confirmPassword'] ? 'border-red-500' : ''
-					}`}
-				/>
+          {/* Email */}
+          <div className="mb-5">
+            <input
+              type="email"
+              {...register('email', {
+                required: true,
+                validate: (value) =>
+                  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value),
+              })}
+              placeholder="Email"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+          </div>
 
-				<label
-					htmlFor="avatar"
-					className="mt-6 flex h-fit w-full items-center justify-center rounded border-2 border-dashed border-neutral-500 p-3"
-				>
-					{file ? (
-						<div className="flex items-center gap-3">
-							<img src={URL.createObjectURL(file)} className="h-8 w-8 rounded-full" />
-							<h3 className="line-clamp-1 max-w-[220px]">{file.name}</h3>
-						</div>
-					) : (
-						<h3 className="font-medium">Drop your avatar here or click to select</h3>
-					)}
-					<input
-						type="file"
-						accept="image/*"
-						id="avatar"
-						onChange={(e) => setFile(e.target.files?.[0] || null)}
-						hidden
-					/>
-				</label>
+          {/* Password */}
+          <div className="mb-5">
+            <input
+              type="password"
+              {...register('password', {
+                required: true,
+                minLength: 3,
+                validate: () => watch('password') === watch('confirmPassword'),
+              })}
+              placeholder="Password"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                errors.password ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+          </div>
 
-				<button
-					type="submit"
-					className="mx-auto mt-6 block rounded bg-green-600 px-8 py-1 font-semibold transition duration-200 hover:bg-opacity-90"
-				>
-					Sign Up
-				</button>
+          {/* Confirm Password */}
+          <div className="mb-5">
+            <input
+              type="password"
+              {...register('confirmPassword', {
+                required: true,
+                minLength: 3,
+                validate: () => watch('password') === watch('confirmPassword'),
+              })}
+              placeholder="Confirm Password"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+          </div>
 
-				<p className="my-3 text-center text-neutral-300">or</p>
-				<GoogleSignIn />
+          {/* Avatar Upload */}
+          <label
+            htmlFor="avatar"
+            className="mb-5 flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-md p-4 text-gray-600 cursor-pointer hover:border-blue-500 transition-colors"
+          >
+            {file ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src={URL.createObjectURL(file)}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+                <span className="text-sm break-all">{file.name}</span>
+              </div>
+            ) : (
+              <span className="font-medium">Drop your avatar or click to select</span>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              id="avatar"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              hidden
+            />
+          </label>
 
-				<NavLink to="/login">
-					<p className="mt-7 block text-center font-medium text-zinc-300 transition duration-200 hover:text-zinc-200">
-						Already have an account?
-					</p>
-				</NavLink>
-			</form>
-		</div>
-	)
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Sign Up
+          </button>
+
+          <div className="my-4 text-center text-gray-500">or</div>
+          <GoogleSignIn />
+
+          <div className="mt-6 text-center">
+            <NavLink
+              to="/login"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Already have an account?
+            </NavLink>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }
 
 export default SignUp

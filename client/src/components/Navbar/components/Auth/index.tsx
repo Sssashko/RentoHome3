@@ -1,48 +1,43 @@
-import { Menu, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useAuthStore } from 'store'
-
-import { ListHome, LogOut, MyListings, ProfilePage } from './components'
+import { NavLink } from 'react-router-dom';
+import { useAuthStore } from 'store';
 
 const Auth = () => {
-	const { user } = useAuthStore()
+  const { user, logOut } = useAuthStore();
 
-	return user ? (
-		<Menu>
-			<Menu.Button className="hidden cursor-pointer items-center gap-3 md:flex">
-				<img
-					src={user.avatar}
-					className="h-8 w-8 rounded-full object-cover object-center"
-				/>
-				<h2 className="text-xl font-semibold text-white">{user.username}</h2>
-			</Menu.Button>
+  if (user) {
+    return (
+      <div className="flex items-center gap-6">
+        <NavLink to="/ProfilePage" className="flex items-center gap-2">
+          <img
+            src={user.avatar}
+            alt={user.username}
+            className="h-10 w-10 rounded-full object-cover"
+          />
+          <span className="text-lg font-semibold text-gray-800">Profile</span>
+        </NavLink>
+        <NavLink
+          to="/mylistings"
+          className="text-lg font-medium text-gray-800 hover:text-[#0093d8] transition-colors"
+        >
+          My Listings
+        </NavLink>
+        <NavLink
+          to="/listhome"
+          className="text-lg font-medium text-gray-800 hover:text-[#0093d8] transition-colors"
+        >
+          List Home
+        </NavLink>
+        <button
+          onClick={logOut}
+          className="rounded-md border-2 border-[#0093d8] bg-white px-5 py-1.5 font-semibold text-[#0093d8] hover:bg-blue-50 transition-colors"
+        >
+          Log Out
+        </button>
+      </div>
+    );
+  }
 
-			<Transition
-				as={Fragment}
-				enter="transition duration-100"
-				enterFrom="opacity-0 scale-90 -translate-y-4"
-				leave="transition duration-75"
-				leaveTo="opacity-0 scale-90 -translate-y-4"
-			>
-				<Menu.Items className="absolute right-16 top-14 z-[1] rounded-md bg-neutral-600 py-2 text-white">
-					<ProfilePage/>
-					<MyListings />
-					<ListHome />
-					<LogOut />
-				</Menu.Items>
-			</Transition>
-		</Menu>
-	) : (
-		<div className="hidden md:block">
-			<NavLink
-				to="login"
-				className="rounded-md border-2 border-white bg-neutral-700 px-5 py-1.5 font-semibold text-white"
-			>
-				Sign In
-			</NavLink>
-		</div>
-	)
-}
+  return null;
+};
 
-export default Auth
+export default Auth;
