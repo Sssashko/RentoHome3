@@ -5,7 +5,6 @@ import { passport } from 'middleware';
 
 import {
 	handleCheckAuth,
-	handleGoogleSignIn,
 	handleLogIn,
 	handleLogOut,
 	handleRefreshToken,
@@ -35,13 +34,6 @@ authRouter.post(
 	handleSignUp
 );
 authRouter.post('/logout', handleLogOut);
-
-authRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-authRouter.get(
-	'/google/callback',
-	passport.authenticate('google', { session: false, failureRedirect: CLIENT_URL }),
-	handleGoogleSignIn
-);
 
 authRouter.post('/refreshtoken', handleRefreshToken);
 

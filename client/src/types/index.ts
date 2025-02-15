@@ -4,8 +4,7 @@ type Class = 'Budget' | 'Medium' | 'Premium'
 
 interface Home {
 	id: number
-	model: string
-	year: number
+	title: string
 	price: number
 	square: string
 	type: Type
@@ -21,6 +20,7 @@ interface User {
 	username: string
 	email: string
 	avatar: string
+	password: string
 }
 
 interface Image {
@@ -28,5 +28,14 @@ interface Image {
 	originalName: string
 	url: string
 }
+
+export interface Comment {
+	id: number;
+	home_id: number;
+	user_id: number;
+	text: string;
+	created_at?: string;
+  }
+  
 
 export { type Home, type Image, type User, type Country, type Class, type Type }

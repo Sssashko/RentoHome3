@@ -3,7 +3,7 @@ import { Home } from 'types'
 
 const updateHome = async ({
 	id,
-	year,
+	title,
 	price,
 	square,
 	class: homeClass,
@@ -14,7 +14,7 @@ const updateHome = async ({
 	const sql = `
     UPDATE homes
     SET
-        year = ?,
+        title = ?,
         price = ?,
         square = ?,
         class = ?,
@@ -23,7 +23,7 @@ const updateHome = async ({
         description = ?
     WHERE id = ?
     `
-	await pool.query(sql, [ year, price, square, homeClass, type, country, description, id]) 
+	await pool.query(sql, [ title, price, square, homeClass, type, country, description, id]) 
 }
 
 export default updateHome

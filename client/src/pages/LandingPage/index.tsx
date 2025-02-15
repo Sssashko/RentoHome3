@@ -16,6 +16,7 @@ const LandingPage: React.FC = () => (
         <FeaturesSection />
         <Homes />
         <CallToActionSection />
+        
       </main>
     </div>
   </FadeIn>

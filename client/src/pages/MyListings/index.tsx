@@ -12,7 +12,7 @@ const MyListings = () => {
 
 	return (
 		<ProtectedPage>
-			<div className="flex flex-wrap justify-center gap-5 p-8">
+			<div className="flex flex-wrap bg-gray-150 justify-center gap-5 p-8 dark:bg-gray-900">
 				{myListings.map((home) => (
 					<Listing {...home} key={home.id} />
 				))}

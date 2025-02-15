@@ -11,7 +11,7 @@ CREATE TABLE users (
 
 CREATE TABLE homes (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    year INT NOT NULL,
+    title VARCHAR(50) NOT NULL,
     price INT NOT NULL,
     square VARCHAR(10) NOT NULL,
     class VARCHAR(50) NOT NULL,
@@ -37,3 +37,16 @@ CREATE TABLE refreshTokens (
     user INT NOT NULL,
     FOREIGN KEY (user) REFERENCES users(id)
 );
+
+
+CREATE TABLE comments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  home_id INT NOT NULL,
+  user_id INT NOT NULL,
+  text TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (home_id) REFERENCES homes(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+

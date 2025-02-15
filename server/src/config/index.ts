@@ -21,6 +21,11 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
 
 const JWT_SECRET = process.env.JWT_SECRET!
 
+const SMTP_HOST = process.env.SMTP_HOST!;
+const SMTP_PORT = process.env.SMTP_PORT!;
+const SMTP_USER = process.env.SMTP_USER!;
+const SMTP_PASS = process.env.SMTP_PASS!;
+
 export {
 	PORT,
 	SERVER_URL,
@@ -34,5 +39,9 @@ export {
 	urlEndpoint,
 	GOOGLE_CLIENT_ID,
 	GOOGLE_CLIENT_SECRET,
-	JWT_SECRET
+	JWT_SECRET,
+	SMTP_HOST,        // Добавлено
+	SMTP_PORT,        // Добавлено
+	SMTP_USER,        // Добавлено
+	SMTP_PASS         // Добавлено
 }
