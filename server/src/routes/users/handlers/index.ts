@@ -1,0 +1,1 @@
+export { default as handleUpdateUser } from './update user'

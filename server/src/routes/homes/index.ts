@@ -4,13 +4,13 @@ import { authenticate } from 'middleware'
 
 import { handleCreateHome, handleDeleteHome, handleFetchHomes, handleUpdateHome } from './handlers'
 
-const carsRouter = Router()
+const homesRouter = Router()
 
-carsRouter.get('/', handleFetchHomes)
+homesRouter.get('/', handleFetchHomes)
 
-carsRouter.post('/', authenticate, upload.array('image'), handleCreateHome)
-carsRouter.patch('/', authenticate, upload.array('image'), handleUpdateHome)
+homesRouter.post('/', authenticate, upload.array('image'), handleCreateHome)
+homesRouter.patch('/', authenticate, upload.array('image'), handleUpdateHome)
 
-carsRouter.delete('/:id', authenticate, handleDeleteHome)
+homesRouter.delete('/:id', authenticate, handleDeleteHome)
 
-export default carsRouter
+export default homesRouter

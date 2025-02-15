@@ -1,7 +1,6 @@
 interface Payload {
 	id: number
-	model: string
-	year: number
+	title: string
 	square: string
 	price: number
 	class: string

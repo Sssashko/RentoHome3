@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+	darkMode: 'class',
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		screens: {
@@ -10,7 +11,13 @@ export default {
 			xl: '1280px',
 			'2xl': '1536px'
 		},
-		extend: {}
+		extend: {
+			colors: {
+				gray: {
+					150: '#EDEDED',
+				}
+			}
+		}
 	},
 	plugins: []
 }

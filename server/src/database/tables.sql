@@ -11,7 +11,7 @@ CREATE TABLE users (
 
 CREATE TABLE homes (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    year INT NOT NULL,
+    title VARCHAR(50) NOT NULL,
     price INT NOT NULL,
     square VARCHAR(10) NOT NULL,
     class VARCHAR(50) NOT NULL,

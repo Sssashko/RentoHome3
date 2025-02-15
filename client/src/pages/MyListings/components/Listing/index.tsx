@@ -1,41 +1,48 @@
-import { useState } from 'react'
-import { Home } from 'types'
-
-import { Portal } from 'components/ui'
-
-import { EditListing, Preview } from './components'
+import { useState } from 'react';
+import { Home } from 'types';
+import { Portal } from 'components/ui';
+import { EditListing, Preview } from './components';
+import { FaEdit } from 'react-icons/fa';
 
 const Listing = (home: Home) => {
-	const [editHome, setEditHome] = useState(false)
-	const { id, model, year, price, images } = home
+  const [editHome, setEditHome] = useState(false);
+  const { id, title, price, images } = home;
 
-	console.log(editHome)
-	
-	return (
-		<>
-			<div
-				className="w-full max-w-[370px] rounded-lg bg-neutral-700 text-white"
-				key={images[0].originalName}
-			>
-				<Preview id={id} image={images[0]} setEditHome={setEditHome} />
+  return (
+    <>
+      <div
+        className="relative w-full max-w-[370px] rounded-lg bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg overflow-hidden transition-transform hover:scale-105"
+        key={images[0].originalName}
+      >
+        {/* Preview Image */}
+        <Preview id={id} image={images[0]} setEditHome={setEditHome} />
 
-				<div className="mx-4 mb-2 mt-1">
-					<h1 className="text-xl font-semibold">{model}</h1>
-					<div className="mt-0.5 flex justify-between text-xl">
-						<h2 className="text-xl font-semibold">{year}</h2>
-						<h2 className="text-xl font-semibold">
-							${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
-						</h2>
-					</div>
-				</div>
-			</div>
-			{editHome && (
-				<Portal>
-					<EditListing {...home} closeModal={() => setEditHome(false)} />
-				</Portal>
-			)}
-		</>
-	)
-}
+        {/* Info */}
+        <div className="p-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold truncate">{title}</h2>
+            <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
+              ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+            </h2>
+          </div>
+        </div>
 
-export default Listing
+        {/* Edit Button */}
+        <button
+          onClick={() => setEditHome(true)}
+          className="absolute top-3 right-3 p-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-400 dark:hover:bg-blue-500 text-white rounded-full transition"
+        >
+          <FaEdit size={16} />
+        </button>
+      </div>
+
+      {editHome && (
+        <Portal>
+          <EditListing {...home} closeModal={() => setEditHome(false)} />
+        </Portal>
+      )}
+    </>
+  );
+};
+
+export default Listing;

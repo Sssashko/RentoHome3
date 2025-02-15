@@ -2,39 +2,39 @@ import { useFiltersStore } from 'store'
 import { Type } from 'types'
 import { CheckBox } from 'components/ui'
 
-const allTypes: Type[] = ['Apartament', 'House'] 
+const allTypes: Type[] = ['Apartament', 'House']
 
-const TypeFilter = () => { 
-	const { types, switchType } = useFiltersStore() 
+const TypeFilter = () => {
+  const { types, switchType } = useFiltersStore()
 
-	return (
-		<>
-			<h2 className="mx-auto mt-5 text-4xl font-semibold text-white md:mt-4 md:text-2xl">
-				Type
-			</h2>
-			<div className="mt-4">
-				<div
-					className="flex cursor-pointer items-center gap-2"
-					onClick={() => allTypes.forEach((type) => switchType(type))} 
-				>
-					<CheckBox active={Object.values(types).every(value => !value)} /> 
-					<h2 className="font-semibold text-white md:text-sm">ALL</h2>
-				</div>
-				{allTypes.map((type) => ( 
-					<div
-						className="mt-2.5 flex cursor-pointer items-center gap-2"
-						onClick={() => switchType(type)} // Toggle each type individually
-						key={type}
-					>
-						<CheckBox active={types[type]} /> 
-						<h2 className="font-semibold text-white md:text-sm">
-							{type.toUpperCase()}
-						</h2>
-					</div>
-				))}
-			</div>
-		</>
-	)
+  return (
+    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow text-gray-800 dark:text-white">
+      <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4">Type</h2>
+
+      {/* "All" toggle */}
+      <div
+        className="flex items-center gap-2 mb-3 cursor-pointer"
+        onClick={() => allTypes.forEach((type) => switchType(type))}
+      >
+        <CheckBox
+          active={Object.values(types).every((value) => !value)}
+        />
+        <span className="font-semibold">ALL</span>
+      </div>
+
+      {/* Individual toggles */}
+      {allTypes.map((type) => (
+        <div
+          className="flex items-center gap-2 mb-2 cursor-pointer"
+          onClick={() => switchType(type)}
+          key={type}
+        >
+          <CheckBox active={types[type]} />
+          <span className="font-semibold">{type.toUpperCase()}</span>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export default TypeFilter

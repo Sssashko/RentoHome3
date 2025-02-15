@@ -21,7 +21,7 @@ const handleSignUp = async (req: Request, res: Response) => {
 
 		const id = await createUser({ username, email, avatar, password })
 
-		const user = { id, username, email, avatar }
+		const user = { id, username, email, avatar, password }
 
 		const accessToken = createAccessToken(user)
 		const refreshToken = createRefreshToken(user)

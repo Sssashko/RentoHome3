@@ -4,8 +4,7 @@ type Class = 'Budget' | 'Medium' | 'Premium'
 
 interface Home {
 	id: number
-	model: string
-	year: number
+	title: string
 	price: number
 	square: string
 	type: Type
@@ -17,10 +16,12 @@ interface Home {
 }
 
 interface User {
+  user: User
 	id: number
 	username: string
 	email: string
 	avatar: string
+	password: string
 }
 
 interface Image {

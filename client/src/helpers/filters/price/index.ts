@@ -4,11 +4,11 @@ const priceFilter = (price: number, priceRange: PriceRange) => {
 	const { minimum, maximum } = priceRange
 
 	if (minimum && maximum) {
-		return minimum < price && price < maximum
+		return minimum <= price && price <= maximum
 	} else if (minimum && !maximum) {
-		return minimum < price
+		return minimum <= price
 	} else if (!minimum && maximum) {
-		return price < maximum
+		return price <= maximum
 	} else {
 		return true
 	}

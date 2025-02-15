@@ -8,7 +8,7 @@ interface House {
   price: string;
   country: string;
   status: string;
-  rating: number; // Add rating property
+  rating: number;
 }
 
 // Example data
@@ -63,32 +63,23 @@ const houses: House[] = [
 // Duplicate data for a continuous loop
 const repeatedHouses = [...houses, ...houses];
 
-// Width per card (including margin)
 const CARD_WIDTH = 336; 
 
 const HousesCarousel: React.FC = () => {
   const [scrollX, setScrollX] = useState(0);
 
-  // Auto-scroll effect
   useEffect(() => {
     const interval = setInterval(() => {
-      setScrollX((prev) => {
-        // Once we reach the end of the original set, reset
-        if (prev >= houses.length * CARD_WIDTH) {
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 20); // Smaller = faster scrolling
-
+      setScrollX((prev) => (prev >= houses.length * CARD_WIDTH ? 0 : prev + 1));
+    }, 40);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="bg-gray-150 py-12">
+    <section className="bg-gray-150 dark:bg-gray-900 py-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-16">
-        <h2 className="text-4xl font-bold text-blue-600 mb-8">
-          Discover Properties
+        <h2 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-8">
+          Most Popular Choices
         </h2>
 
         <div className="relative w-full overflow-hidden">
@@ -103,21 +94,19 @@ const HousesCarousel: React.FC = () => {
             {repeatedHouses.map((house, idx) => (
               <div
                 key={`${house.id}-${idx}`}
-                className="w-80 mr-4 bg-gray-50 rounded-lg shadow-md p-4 flex-shrink-0"
+                className="w-80 mr-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 flex-shrink-0"
               >
                 <img
                   src={house.image}
                   alt={house.title}
                   className="w-full h-48 object-cover rounded-md"
                 />
-                <h3 className="mt-4 text-lg font-semibold text-gray-800">
+                <h3 className="mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
                   {house.title}
                 </h3>
                 <div className="flex items-center mt-2">
-                  {/* Render rating stars (out of 5) */}
                   {Array.from({ length: 5 }).map((_, i) =>
                     i < house.rating ? (
-                      // Filled star
                       <svg
                         key={i}
                         className="w-5 h-5 text-yellow-500 mr-1"
@@ -127,7 +116,6 @@ const HousesCarousel: React.FC = () => {
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.958c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.54-1.118l1.287-3.958a1 1 0 00-.364-1.118L2.974 9.385c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.958z" />
                       </svg>
                     ) : (
-                      // Empty star
                       <svg
                         key={i}
                         className="w-5 h-5 text-yellow-500 mr-1"
@@ -145,16 +133,16 @@ const HousesCarousel: React.FC = () => {
                     )
                   )}
                 </div>
-                <p className="text-gray-600 mt-2">{house.price}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-gray-600 dark:text-gray-300 mt-2">{house.price}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Country: {house.country}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Status: {house.status}
                 </p>
                 <Link
                   to={`/house/${house.id}`}
-                  className="mt-4 w-full inline-block text-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  className="mt-4 w-full inline-block text-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
                 >
                   View
                 </Link>

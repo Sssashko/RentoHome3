@@ -1,31 +1,33 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { logOutQuery } from 'api/auth'
-import { User } from 'types'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { logOutQuery } from 'api/auth';
+import { User } from 'types';
 
 interface Store {
-	user: User | null
-	setUser: (user: User) => Promise<void>
-	logOut: () => void
+    user: User | null;
+    setUser: (user: User | null) => Promise<void>; // 👈 Разрешаем null
+    logOut: () => Promise<void>; 
 }
 
 const useAuthStore = create<Store>()(
-	persist(
-		(set, get) => ({
-			user: null,
-			setUser: async (user: User) => {
-				set({ user })
-			},
-			logOut: async () => {
-				const user = get().user
-				if (user) {
-					set({ user: null })
-					logOutQuery(user.id)
-				}
-			}
-		}),
-		{ name: 'auth' }
-	)
-)
+    persist(
+        (set, get) => ({
+            user: null,
+            setUser: async (user: User | null) => { // 👈 Теперь можно передавать null
+                set({ user });
+            },
+            logOut: async () => {
+                const user = get().user;
+                if (user) {
+                    await logOutQuery(user.id).catch(() => {}); 
+                }
+                set({ user: null }); 
+            }
+        }),
+        { name: 'auth' }
+    )
+);
 
-export default useAuthStore
+export const useLogOut = () => useAuthStore((state) => state.logOut);
+
+export default useAuthStore;

@@ -16,13 +16,13 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 4000 }) => {
   }, [images, interval]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       {images.map((src, index) => (
         <img
           key={index}
           src={src}
           alt={`Slide ${index + 1}`}
-          className={`absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-lg transition-opacity duration-1000 ${
+          className={`absolute top-0 left-0 w-full h-full object-cover rounded-lg transition-opacity duration-1000 ${
             index === currentIndex ? 'opacity-100 relative' : 'opacity-0'
           }`}
         />
@@ -32,5 +32,3 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 4000 }) => {
 };
 
 export default Carousel;
-
-

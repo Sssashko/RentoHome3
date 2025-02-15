@@ -4,7 +4,7 @@ interface Payload {
 	country: string
 	class: string
 	square: string
-	year: number
+	title: string
 	price: number
 	description: string
 }
