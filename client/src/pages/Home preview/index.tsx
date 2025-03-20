@@ -328,4 +328,4 @@ const HomePreview = () => {
   );
 };
 
-export default HomePreview;
+export default HomePreview

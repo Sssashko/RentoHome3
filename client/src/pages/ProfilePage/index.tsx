@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from 'store';
 import updateProfile from 'api/profile/profile';
-import  deleteUser  from 'api/delete user/user'; // тот самый запрос для удаления
+import deleteUserQuery from 'api/delete user/user'; // тот самый запрос для удаления
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useFilteredHomes } from 'hooks';
@@ -131,7 +131,7 @@ const ProfilePage = () => {
     if (!confirmDelete) return;
 
     try {
-      await toast.promise(deleteUser(user.id), {
+      await toast.promise(deleteUserQuery(user.id), {
         loading: 'Deleting user...',
         success: 'User deleted successfully!',
         error: 'Error deleting user',

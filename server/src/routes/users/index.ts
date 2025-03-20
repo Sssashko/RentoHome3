@@ -1,9 +1,7 @@
 import { Router } from 'express';
 import { upload } from 'helpers';
 import authenticate from 'middleware/authenticate';
-import { handleUpdateUser } from './handlers';
-import { handleDeleteUser } from './handlers';
-
+import { handleDeleteUser, handleUpdateUser } from './handlers';
 
 const usersRouter = Router();
 

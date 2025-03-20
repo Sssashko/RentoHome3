@@ -2,7 +2,6 @@ import { SERVER_URL } from 'config';
 import { Request, Response } from 'express';
 import { User } from 'types';
 import createComment from 'database/queries/comments/create comment';
-// Если хочешь загружать картинки для комментария, можешь подключить что-то вроде createImage
 
 const handleCreateComment = async (req: Request, res: Response) => {
   try {
@@ -16,20 +15,6 @@ const handleCreateComment = async (req: Request, res: Response) => {
 
     // 3) Вызываем createComment
     const commentId = await createComment(comment, user.id);
-
-    // 4) Если хотим загружать картинки для комментария, делаем по аналогии:
-    // const uploaded: Omit<Image, 'id'>[] = [];
-    // if (Array.isArray(req.files)) {
-    //   await Promise.all(
-    //     req.files.map(async (file) => {
-    //       const fileName = file.filename;
-    //       const originalName = file.originalname;
-    //       const url = `${SERVER_URL}/images/${file.filename}`;
-    //       // await createImage(fileName, originalName, url, commentId); // если нужна таблица images для комментов
-    //       uploaded.push({ name: fileName, originalName, url });
-    //     })
-    //   );
-    // }
 
     // 5) Собираем объект, который вернём клиенту
     const createdComment = {
