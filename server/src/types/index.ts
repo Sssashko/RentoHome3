@@ -1,5 +1,5 @@
 type Type = 'Apartament' | 'House'
-type Country = 'Latvia' | 'Estonia'
+type Country = 'Latvia' | 'Estonia' | 'Lithuania'
 type Class = 'Budget' | 'Medium' | 'Premium'
 
 interface Home {
@@ -11,6 +11,7 @@ interface Home {
 	class: Class
 	country: Country
 	description: string
+	likes: number
 	user: User
 	images: Image[]
 }
@@ -28,5 +29,19 @@ interface Image {
 	originalName: string
 	url: string
 }
+
+export interface Comment {
+	id: number;
+	home_id: number;
+	user_id: number;
+	text: string;
+	created_at?: string;
+  }
+
+export interface Like {
+	id: number;
+	home_id: number;
+	user_id: number;
+  }
 
 export { type Home, type Image, type User }

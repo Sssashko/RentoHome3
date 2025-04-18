@@ -6,58 +6,61 @@ import {
   handleDeleteHome,
   handleFetchHomes,
   handleUpdateHome,
+  handleLike
 } from './handlers';
-
 import createComment from 'database/queries/comments/create comment';
 import { fetchCommentsByHomeId } from 'database/queries/comments/fetch comments';
+import  handleFetchLikes  from 'database/queries/homes/fetch likes';
 
 const homesRouter = Router();
 
-// Пример GET /homes -> список домов
+// GET /homes – список домов
 homesRouter.get('/', handleFetchHomes);
 
-// Пример POST /homes -> создание дома
+// POST /homes – создание дома
 homesRouter.post('/', authenticate, upload.array('image'), handleCreateHome);
 
-// Пример PATCH /homes -> обновление дома
+// PATCH /homes – обновление дома
 homesRouter.patch('/', authenticate, upload.array('image'), handleUpdateHome);
 
-// Пример DELETE /homes/:id -> удаление дома
+// DELETE /homes/:id – удаление дома
 homesRouter.delete('/:id', authenticate, handleDeleteHome);
 
-/**
- * GET /homes/:id/comments -> получить все комментарии к дому
- */
-homesRouter.get('/:id/comments', async (req, res) => {
+// PATCH /homes/:id/like – переключить лайк для дома (toggle like)
+homesRouter.patch('/:id/like', authenticate, handleLike);
+
+// GET /homes/:id/likes – получение лайков для конкретного дома
+homesRouter.get('/:id/likes', async (req, res) => {
   try {
     const homeId = Number(req.params.id);
-
-    // Должен быть запрос типа:
-    // SELECT * FROM comments WHERE home_id = ?
-    const comments = await fetchCommentsByHomeId(homeId);
-
-    res.json({ success: true, comments });
+    const likes = await handleFetchLikes(homeId);
+    res.json({ success: true, likes });
   } catch (error) {
-    // ...
+    console.error('Error fetching likes:', error);
+    res.status(500).json({ success: false, message: 'Error fetching likes' });
   }
 });
 
+// GET /homes/:id/comments – получение комментариев для дома
+homesRouter.get('/:id/comments', async (req, res) => {
+  try {
+    const homeId = Number(req.params.id);
+    const comments = await fetchCommentsByHomeId(homeId);
+    res.json({ success: true, comments });
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    res.status(500).json({ success: false, message: 'Error fetching comments' });
+  }
+});
 
-/**
- * POST /homes/:id/comments -> создать комментарий к дому
- */
+// POST /homes/:id/comments – создание комментария для дома
 homesRouter.post('/:id/comments', async (req, res) => {
   try {
     const homeId = Number(req.params.id);
     const { text } = req.body;
-
-    // Если используешь авторизацию, можешь взять userId из req.user.id, иначе ставим заглушку:
-    const userId = 1; // Или req.user?.id, если authenticate
-
-    // Сохраняем в БД
+    // Если используете авторизацию, получите userId из req.user, иначе ставьте заглушку
+    const userId = 1; // Или req.user?.id, если authenticate применяется
     const newCommentId = await createComment({ home_id: homeId, text }, userId);
-
-    // Формируем ответ
     res.json({
       success: true,
       comment: {
@@ -65,8 +68,8 @@ homesRouter.post('/:id/comments', async (req, res) => {
         home_id: homeId,
         user_id: userId,
         text,
-        created_at: new Date(),
-      },
+        created_at: new Date()
+      }
     });
   } catch (error) {
     console.error('Error creating comment:', error);

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import { Country } from 'types'
 
-const countries: Country[] = ['Latvia', 'Estonia']
+const countries: Country[] = ['Latvia', 'Estonia', 'Lithuania']
 
 interface Props {
 	country: Country
@@ -14,7 +14,7 @@ const CountrySelector = ({ country, switchCountry }: Props) => (
 		{countries.map((item) => (
 			<div
 				onClick={() => switchCountry(item)}
-				className={`flex h-12 w-[45%] cursor-pointer items-center justify-center rounded border-2 border-[#858585] text-lg font-semibold text-[#858585] transition duration-200 focus:outline-none ${
+				className={`flex h-12 w-[30%] cursor-pointer items-center justify-center rounded border-2 border-[#858585] text-lg font-semibold text-[#858585] transition duration-200 focus:outline-none ${
 					country === item ? 'bg-[#858585] text-neutral-700' : 'bg-transparent'
 				}`}
 				key={item}

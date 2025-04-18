@@ -1,65 +1,140 @@
-import { useFilteredHomes } from 'hooks';
-import { NavLink } from 'react-router-dom';
-import { FaHeart } from 'react-icons/fa';
+// src/pages/Listings/components/Homes/index.tsx
+import React, { useState, useEffect, useMemo } from 'react'
+import { NavLink } from 'react-router-dom'
+import { FaHeart } from 'react-icons/fa'
+import toast from 'react-hot-toast'
 
-const Homes = () => {
-  const homes = useFilteredHomes();
+import useFilteredHomes from 'hooks/useFilteredHomes'
+import { likeHomeQuery } from 'api/homes'
+import fetchUserLikes from 'api/homes/fetch likes'
+import { useAuthStore } from 'store'
+import { Home } from 'types'
 
-  if (!homes.length) {
+const Homes: React.FC = () => {
+  const homes = useFilteredHomes()
+  const [localHomes, setLocalHomes] = useState<Home[]>(homes)
+  const [likedIds, setLikedIds] = useState<number[]>([])
+  const { user } = useAuthStore()
+  const currentUserId = user?.id
+
+  useEffect(() => {
+    setLocalHomes(homes)
+  }, [homes])
+
+  useEffect(() => {
+    if (!currentUserId) return
+    ;(async () => {
+      try {
+        const resp = await fetchUserLikes(currentUserId)
+        if (resp.success && Array.isArray(resp.likes)) {
+          setLikedIds(resp.likes)
+        }
+      } catch {
+        toast.error('Error loading likes')
+      }
+    })()
+  }, [currentUserId])
+
+  const sortedHomes = useMemo(
+    () => [...localHomes].sort((a, b) => b.likes - a.likes),
+    [localHomes]
+  )
+
+  const getRank = (id: number) => {
+    const idx = sortedHomes.findIndex(h => h.id === id)
+    return idx >= 0 && idx < 3 ? idx + 1 : null
+  }
+
+  const handleLike = async (homeId: number) => {
+    const isLiked = likedIds.includes(homeId)
+    try {
+      const updatedHome = await likeHomeQuery(homeId)
+      if (isLiked) {
+        toast('Like removed!', { icon: '👎' })
+        setLikedIds(ids => ids.filter(i => i !== homeId))
+      } else {
+        toast.success('Liked!')
+        setLikedIds(ids => [...ids, homeId])
+      }
+      setLocalHomes(prev =>
+        prev.map(h => (h.id === homeId ? { ...h, likes: updatedHome.likes } : h))
+      )
+    } catch {
+      toast.error('Error toggling like')
+    }
+  }
+
+  if (!localHomes.length) {
     return (
       <h1 className="mx-auto mt-10 p-4 text-center text-2xl font-bold text-gray-800 dark:text-white">
         No homes matching your queries found!
       </h1>
-    );
+    )
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 p-2 mt-6">
-      {homes.map(({ id, title, price, images, square, country, class: homeClass }) => {
-        const formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 mt-6">
+      {localHomes.map(home => {
+        const { id, title, price, images, square, country, class: homeClass, likes } = home
+        const formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+        const rank = getRank(id)
 
         return (
           <NavLink
             key={id}
             to={`/${id}`}
-            className="relative block w-full h-auto min-h-[280px] overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 bg-white dark:bg-gray-800 ml-10"
+            className="relative block w-full h-auto min-h-[280px] overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 bg-white dark:bg-gray-800"
           >
-            {/* Image */}
             <div className="relative">
               <img
                 src={images[0]?.url || '/default-home.jpg'}
-                alt={`Home ${id}`}
+                alt={title}
                 className="w-full h-52 object-cover transition-transform duration-500"
               />
-              {/* Guest Pick Label */}
-              <span className="absolute top-2 left-2 bg-white dark:bg-gray-700 text-sm font-semibold px-3 py-1 rounded-md shadow-md">
-                Guest Pick
-              </span>
-              {/* Favorite Button */}
-              <FaHeart
-                className="absolute top-2 right-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition cursor-pointer"
-                size={18}
-              />
+              {rank && (
+                <span className="absolute top-2 left-2 bg-yellow-500 text-white text-sm font-bold px-2 py-1 rounded-md shadow-md">
+                  TOP {rank}
+                </span>
+              )}
+              <button
+                onClick={e => {
+                  e.preventDefault()
+                  if (!currentUserId) {
+                    toast.error('Please log in to like!')
+                    return
+                  }
+                  handleLike(id)
+                }}
+                className="absolute top-2 right-2 flex items-center justify-center w-10 h-10 bg-white bg-opacity-75 rounded-full hover:bg-opacity-100 transition"
+              >
+                <FaHeart
+                  size={22}
+                  className={`${
+                    likedIds.includes(id)
+                      ? 'text-red-600'
+                      : 'text-gray-300 hover:text-red-600'
+                  }`}
+                />
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-600 text-white text-xs font-bold rounded-full">
+                  {likes}
+                </span>
+              </button>
             </div>
-
-            {/* Info */}
             <div className="p-3 space-y-2">
-              {/* Title */}
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
-              {/* Country & Class */}
-              <p className="text-md text-gray-700 dark:text-gray-400">{country} • {homeClass}</p>
-              {/* Area */}
+              <p className="text-md text-gray-700 dark:text-gray-400">
+                {country} • {homeClass}
+              </p>
               <p className="text-md text-gray-700 dark:text-gray-400">Area: {square} m²</p>
-              {/* Price */}
               <p className="text-lg font-bold text-gray-900 dark:text-white">
                 {formattedPrice}$ / night
               </p>
             </div>
           </NavLink>
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}
 
-export default Homes;
+export default Homes

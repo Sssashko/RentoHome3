@@ -2,7 +2,7 @@ import { useFiltersStore } from 'store'
 import { Country } from 'types'
 import { CheckBox } from 'components/ui'
 
-const countriesArray: Country[] = ['Latvia', 'Estonia']
+const countriesArray: Country[] = ['Latvia', 'Estonia', 'Lithuania']
 
 const CountrySelect = () => {
   const { countries, switchTransition } = useFiltersStore()

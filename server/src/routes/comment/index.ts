@@ -1,24 +1,13 @@
 import { Router } from 'express';
-import { authenticate } from 'middleware'; // если надо
-import { upload } from 'helpers';         // если надо
-import {
-  handleCreateComment,
-  // handleUpdateComment,
-  // handleDeleteComment
-} from './handlers';
-
-import { fetchCommentsByHomeId } from '../comment/handlers/fetch comments';
+import { authenticate } from 'middleware';
+import handleCreateComment from './handlers/create comment';
+import handleDeleteComment from './handlers/delete comment';
+import { fetchCommentsByHomeId } from './handlers/fetch comments';
 
 const commentsRouter = Router();
 
-// GET /comments -> например, список всех комментариев (если нужно)
-commentsRouter.get('/', fetchCommentsByHomeId);
-
-// POST /comments -> создать комментарий
-commentsRouter.post('/', authenticate, upload.array('image'), handleCreateComment);
-
-// Если нужны patch/delete:
-// commentsRouter.patch('/:id', authenticate, upload.array('image'), handleUpdateComment);
-// commentsRouter.delete('/:id', authenticate, handleDeleteComment);
+commentsRouter.get('/:homeId', fetchCommentsByHomeId);
+commentsRouter.post('/:homeId', authenticate, handleCreateComment);
+commentsRouter.delete('/:commentId', authenticate, handleDeleteComment);
 
 export default commentsRouter;

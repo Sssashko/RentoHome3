@@ -5,6 +5,7 @@ import HeroSection from '../../components/LandingPage/HeroSection';
 import FeaturesSection from '../../components/LandingPage/FeaturesSection';
 import CallToActionSection from '../../components/LandingPage/CallToActionSection';
 import Homes from '../../components/LandingPage/Homes';
+import FAQ from 'components/LandingPage/FAQ';
 // import Footer from '../../components/Footer';
 
 const LandingPage: React.FC = () => (
@@ -15,6 +16,7 @@ const LandingPage: React.FC = () => (
         <HeroSection />
         <FeaturesSection />
         <Homes />
+        <FAQ />
         <CallToActionSection />
         
       </main>

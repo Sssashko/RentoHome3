@@ -11,6 +11,7 @@ interface Types {
 interface Countries {
 	Latvia: boolean
 	Estonia: boolean
+	Lithuania: boolean
 }
 
 interface Classes {

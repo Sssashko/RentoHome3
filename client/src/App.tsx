@@ -1,3 +1,4 @@
+import ScrollToTop from './components/shared/ScroolToTop';
 import { AppLoader, Footer, Navbar, Routes, ServerError } from 'components'
 import { useLoadData } from 'hooks'
 import { useEffect } from 'react'
@@ -17,6 +18,7 @@ function App() {
     <div className="flex min-h-screen flex-col bg-white text-gray-800 dark:bg-neutral-800 dark:text-white transition-colors">
       <Toaster position="top-center" />
       <Navbar />
+      <ScrollToTop /> 
       <Routes />
       <Footer />
     </div>

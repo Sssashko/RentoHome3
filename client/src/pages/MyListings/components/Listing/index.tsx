@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Home } from 'types';
 import { Portal } from 'components/ui';
 import { EditListing, Preview } from './components';
-import { FaEdit } from 'react-icons/fa';
 
 const Listing = (home: Home) => {
   const [editHome, setEditHome] = useState(false);
@@ -27,13 +26,6 @@ const Listing = (home: Home) => {
           </div>
         </div>
 
-        {/* Edit Button */}
-        <button
-          onClick={() => setEditHome(true)}
-          className="absolute top-3 right-3 p-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-400 dark:hover:bg-blue-500 text-white rounded-full transition"
-        >
-          <FaEdit size={16} />
-        </button>
       </div>
 
       {editHome && (

@@ -52,7 +52,7 @@ const Preview = ({ id, image, setEditHome }: Props) => {
 					enterFrom="opacity-0"
 					leaveTo="pointer-events-none opacity-0"
 				>
-					<h1 className="mx-auto w-56 text-center font-semibold">
+					<h1 className="mx-auto w-56 text-center font-semibold text-white">
 						Are you sure you want to delete this listing?
 					</h1>
 

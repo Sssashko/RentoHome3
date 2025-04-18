@@ -1,25 +1,31 @@
-import { PageNotFound } from 'pages'
-import { useState, useEffect } from 'react'
-import { FcNext, FcPrevious } from 'react-icons/fc'
-import { FaCheck } from 'react-icons/fa'
-import { useParams } from 'react-router-dom'
-import { useHomesStore } from 'store'
-import { ImageViewer } from './components'
+import { PageNotFound } from 'pages';
+import { useState, useEffect } from 'react';
+import { FcNext, FcPrevious } from 'react-icons/fc';
+import { FaCheck } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import { useHomesStore } from 'store';
+import { useAuthStore } from 'store'; // <-- импорт auth
+import { ImageViewer } from './components';
+import deleteComment from 'api/comments/delete comment';
 
 const HomePreview = () => {
   const { id } = useParams();
   const { homes } = useHomesStore();
+
+  // Берём текущего пользователя из auth-хранилища (пр. user.id = 7)
+  const { user } = useAuthStore();
+  const currentUserId = user?.id;
 
   const [currentImage, setCurrentImage] = useState(0);
   const [previewImage, setPreviewImage] = useState<null | string>(null);
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
 
-  // --- НОВОЕ: Состояние для комментариев
+  // Состояния для комментариев
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState('');
 
-  // Ищем дом по id
+  // Находим нужный дом
   const home = id ? homes.find((h) => h.id === Number(id)) : null;
   if (!home) return <PageNotFound />;
 
@@ -34,44 +40,69 @@ const HomePreview = () => {
     user: { username, email, avatar },
   } = home;
 
-  // --- НОВОЕ: Загружаем комментарии при загрузке компонента
+  // Подгрузка комментариев
   useEffect(() => {
     if (!home) return;
     fetch(`http://localhost:4000/homes/${home.id}/comments`)
-      .then(r => r.json())
-      .then(data => {
+      .then((r) => r.json())
+      .then((data) => {
         if (data.success) {
           setComments(data.comments);
         }
       })
-      .catch(err => console.error('Error fetching comments:', err));
+      .catch((err) => console.error('Error fetching comments:', err));
   }, [home]);
-  
 
-  // --- НОВОЕ: Функция для отправки нового комментария
+  // Создание нового комментария
   const handleCreateComment = async () => {
     if (!newComment.trim()) return;
-    const res = await fetch(`http://localhost:4000/homes/${home.id}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: newComment })
-    });
-    const data = await res.json();
-    if (data.success) {
-      setComments((prev) => [...prev, data.comment]);
-      setNewComment('');
+    if (!currentUserId) {
+      console.error('No user is logged in, cannot create comment');
+      return;
+    }
+    try {
+      // Передаём home_id, user_id и text в теле запроса (JSON)
+      const res = await fetch(`http://localhost:4000/homes/${home.id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Если используете JWT, можно добавить:
+          // 'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          home_id: home.id,
+          user_id: currentUserId,
+          text: newComment
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setComments((prev) => [...prev, data.comment]);
+        setNewComment('');
+      } else {
+        console.error('Error creating comment:', data.message || 'Unknown error');
+      }
+    } catch (err) {
+      console.error('Error creating comment:', err);
     }
   };
-  
+
+  // Удаление комментария
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      await deleteComment(commentId);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
 
   // Кнопки переключения картинок
   const prevImage = () =>
     setCurrentImage(currentImage > 0 ? currentImage - 1 : images.length - 1);
-
   const nextImage = () =>
     setCurrentImage(currentImage < images.length - 1 ? currentImage + 1 : 0);
 
-  // Расчёт цены
   const renderPriceInfo = () => {
     if (!checkIn || !checkOut) {
       return (
@@ -80,7 +111,6 @@ const HomePreview = () => {
         </p>
       );
     }
-
     const inDate = new Date(checkIn);
     const outDate = new Date(checkOut);
     const diffInMs = outDate.getTime() - inDate.getTime();
@@ -93,7 +123,7 @@ const HomePreview = () => {
     return (
       <>
         <p className="text-gray-700 dark:text-gray-300 mt-2">
-          {totalDays} день(дней), {nights} ночь(ночей)
+          {totalDays} day(days), {nights} night(nights)
         </p>
         <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
           Total: ${totalPrice.toLocaleString()}
@@ -105,10 +135,8 @@ const HomePreview = () => {
   return (
     <div className="flex justify-center my-10">
       <div className="w-full max-w-[1200px] bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-        
-        {/* Верхний блок: 2 колонки (картинка слева, параметры/бронирование справа) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Левая колонка — большая картинка и миниатюры */}
+          {/* Левая колонка — изображения */}
           <div>
             <div className="relative w-full h-[400px] md:h-[450px] overflow-hidden rounded-lg shadow-md">
               {images.length > 0 && (
@@ -132,13 +160,11 @@ const HomePreview = () => {
                 </>
               )}
             </div>
-
-            {/* Галерея миниатюр */}
             <div className="mt-4 flex flex-wrap gap-3 justify-center">
               {images.map((image, index) => (
                 <img
-                  src={image.url}
                   key={image.originalName || index}
+                  src={image.url}
                   className={`w-20 h-20 rounded-lg cursor-pointer object-cover transition-transform hover:scale-105 ${
                     index === currentImage ? 'border-4 border-blue-500' : ''
                   }`}
@@ -149,9 +175,8 @@ const HomePreview = () => {
             </div>
           </div>
 
-          {/* Правая колонка — основные параметры, рейтинг, booking */}
+          {/* Правая колонка */}
           <div className="flex flex-col justify-between">
-            {/* Заголовок, цена, рейтинг */}
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                 {title || 'Home'}
@@ -159,7 +184,6 @@ const HomePreview = () => {
               <p className="text-xl text-green-600 dark:text-green-400 font-semibold mt-2">
                 ${price.toLocaleString()}
               </p>
-              {/* Рейтинг */}
               <div className="flex items-center mt-2">
                 <span className="text-yellow-500 text-3xl">★★★★☆</span>
                 <span className="ml-3 text-xl text-gray-600 dark:text-gray-300">4.7 / 5</span>
@@ -176,8 +200,6 @@ const HomePreview = () => {
                 </p>
               </div>
             </div>
-
-            {/* Бронирование */}
             <div className="mt-6 border-t pt-4">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Booking Dates
@@ -207,8 +229,6 @@ const HomePreview = () => {
                 </div>
               </div>
               <div className="mt-4">{renderPriceInfo()}</div>
-
-              {/* Кнопка "Reserve" */}
               <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
                 Reservate
               </button>
@@ -216,7 +236,6 @@ const HomePreview = () => {
           </div>
         </div>
 
-        {/* Нижний блок: Описание, Удобства, Информация о владельце, Карта */}
         <div className="mt-8 space-y-6">
           {/* Описание */}
           <div>
@@ -226,9 +245,7 @@ const HomePreview = () => {
 
           {/* Удобства */}
           <div className="p-4 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-              Amenities
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Amenities</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-base text-gray-700 dark:text-gray-200">
               <div className="flex items-center gap-2">
                 <FaCheck className="text-green-500" />
@@ -257,7 +274,7 @@ const HomePreview = () => {
             </div>
           </div>
 
-          {/* Информация о владельце */}
+          {/* Инфа о владельце */}
           <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center gap-4 shadow-md">
             <img
               src={avatar}
@@ -265,18 +282,18 @@ const HomePreview = () => {
               alt="User Avatar"
             />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{username}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {username}
+              </h3>
               <p className="text-sm text-gray-500 dark:text-gray-300">
                 📧 Email: <span className="text-gray-800 dark:text-white">{email}</span>
               </p>
             </div>
           </div>
 
-          {/* Карта (рандомная локация) */}
+          {/* Карта */}
           <div className="p-4 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-              Location
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Location</h3>
             <iframe
               title="Random Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224578.33324004497!2d-74.11808619553954!3d40.705825363980515!2m3!1f0!2f0!
@@ -292,16 +309,26 @@ const HomePreview = () => {
           </div>
         </div>
 
-        {/* СЕКЦИЯ КОММЕНТАРИЕВ */}
+        {/* Блок комментариев */}
         <div className="mt-8">
           <h3 className="text-xl font-bold mb-4">Comments</h3>
 
           {comments.map((c) => (
-            <div key={c.id} className="border p-2 mb-2">
+            <div
+              key={c.id}
+              className="border p-3 mb-2 rounded-md bg-gray-50 dark:bg-gray-700"
+            >
               <p className="text-gray-800 dark:text-gray-200">{c.text}</p>
-              <small className="text-gray-400">
-                {`Comment #${c.id} by user #${c.user_id || ''}`}
-              </small>
+              <small className="text-gray-400">{`Comment #${c.id} by user #${c.user_id || ''}`}</small>
+
+              {c.user_id === currentUserId && (
+                <button
+                  onClick={() => handleDeleteComment(c.id)}
+                  className="float-right bg-red-500 text-white px-2 py-1 rounded-md ml-2"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           ))}
 
@@ -309,12 +336,12 @@ const HomePreview = () => {
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="border w-full p-2"
+              className="border w-full p-2 rounded"
               placeholder="Write a comment..."
             />
             <button
               onClick={handleCreateComment}
-              className="bg-blue-600 text-white px-4 py-2 mt-2"
+              className="bg-blue-600 text-white px-4 py-2 mt-2 rounded hover:bg-blue-700 transition"
             >
               Add Comment
             </button>
@@ -322,10 +349,11 @@ const HomePreview = () => {
         </div>
       </div>
 
-      {/* Просмотр изображения в полноэкранном режиме */}
-      {previewImage && <ImageViewer image={previewImage} exit={() => setPreviewImage(null)} />}
+      {previewImage && (
+        <ImageViewer image={previewImage} exit={() => setPreviewImage(null)} />
+      )}
     </div>
   );
 };
 
-export default HomePreview
+export default HomePreview;

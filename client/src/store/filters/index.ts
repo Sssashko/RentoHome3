@@ -36,7 +36,8 @@ const useFiltersStore = create<Filters>()((set) => ({
   },
   countries: {
     Latvia: true,
-    Estonia: true
+    Estonia: true,
+    Lithuania: true
   },
   classes: {
     Budget: true,

@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from 'store';
-import { GoogleSignIn } from 'components/shared';
 
 type Data = {
   email: string;
@@ -81,9 +80,6 @@ const LogIn = () => {
           >
             Log In
           </button>
-
-          <div className="my-4 text-center text-gray-500 dark:text-gray-400">or</div>
-          <GoogleSignIn />
 
           <div className="mt-6 text-center">
             <NavLink

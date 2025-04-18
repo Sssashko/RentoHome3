@@ -1,7 +1,7 @@
 import React from 'react';
 
 const CallToActionSection: React.FC = () => (
-  <section className="bg-white dark:bg-gray-800 py-16">
+  <section className="bg-gray-150 dark:bg-gray-800 py-16">
     <div className="container mx-auto px-6 md:px-12 lg:px-16 text-center">
       <h2 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-6">
         Ready to Get Started?
