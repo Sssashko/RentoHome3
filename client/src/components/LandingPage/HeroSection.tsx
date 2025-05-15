@@ -1,3 +1,5 @@
+// The top banner with title, buttons, and image carousel
+
 import React from 'react';
 import Carousel from './Carousel';
 

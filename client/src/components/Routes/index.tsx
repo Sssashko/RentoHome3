@@ -1,25 +1,47 @@
-import { HomePreview, CreateListing, Listings, LogIn, MyListings, PageNotFound, SignUp, ProfilePage, LandingPage, AboutUs, Support } from 'pages'
+import {
+  HomePreview,
+  CreateListing,
+  Listings,
+  LogIn,
+  MyListings,
+  PageNotFound,
+  SignUp,
+  ProfilePage,
+  LandingPage,
+  AboutUs,
+  Support
+} from 'pages'
 import { Route, Routes } from 'react-router-dom'
 
 const AppRoutes = () => (
-	<Routes>
-		<Route path="/">
-			<Route path="/listings" element={<Listings />} />
-			<Route path=":id" element={<HomePreview />} />
-		</Route>
+  <Routes>
+    {/* Nested routes under "/" */}
+    <Route path="/">
+      {/* /listings → show all listings */}
+      <Route path="listings" element={<Listings />} />
+      {/* /:id → show detail for a single home by its ID */}
+      <Route path=":id" element={<HomePreview />} />
+    </Route>
 
-		<Route index element={<LandingPage />} />
-		<Route path="/login" element={<LogIn />} />
-		<Route path="/signup" element={<SignUp />} />
+    {/* index route "/" → landing page */}
+    <Route index element={<LandingPage />} />
 
-		<Route path="/mylistings" element={<MyListings />} />
-		<Route path="/listhome" element={<CreateListing />} />
-		<Route path="/ProfilePage" element={<ProfilePage/>} />
-		<Route path="/aboutus" element={<AboutUs />} />
-		<Route path="/support" element={<Support />} />
-		<Route path="/*" element={<PageNotFound />} />
+    {/* Authentication */}
+    <Route path="login" element={<LogIn />} />
+    <Route path="signup" element={<SignUp />} />
 
-	</Routes>
+    {/* User dashboards */}
+    <Route path="mylistings" element={<MyListings />} />
+    <Route path="listhome" element={<CreateListing />} />
+    <Route path="ProfilePage" element={<ProfilePage />} />
+
+    {/* Static pages */}
+    <Route path="aboutus" element={<AboutUs />} />
+    <Route path="support" element={<Support />} />
+
+    {/* Fallback for any undefined route → 404 */}
+    <Route path="*" element={<PageNotFound />} />
+  </Routes>
 )
 
 export default AppRoutes

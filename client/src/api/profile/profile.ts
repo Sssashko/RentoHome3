@@ -1,26 +1,25 @@
-import API from 'api';
-import { User } from 'types';
+import API from 'api'
+import { User } from 'types'
 
 const updateProfile = async (body: FormData) => {
-  console.log('🚀 Sending PATCH request to /users/update with:', body);
-
+  // try to send the updated profile to the server
   try {
-const { data } = await API.patch<User>('/users/update', body, {
-    headers: {
+    // send PATCH request with form data and auth header
+    const { data } = await API.patch<User>('/users/update', body, {
+      headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}` // 👈 Добавляем токен в заголовок
-    },
-    withCredentials: true // 👈 Добавляем, если сервер использует куки
-});
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+      },
+      withCredentials: true
+    })
 
-
-    console.log('✅ Response received:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error in updateProfile:', error);
-    throw error;
+    // return the updated user info
+    return data
+  } catch (err) {
+    // log error for debugging
+    console.error('Error updating profile:', err)
+    throw err  // re-throw so caller can handle it
   }
-};
+}
 
-// 👇 ВАЖНО: именно так должен быть экспорт
-export default updateProfile;
+export default updateProfile

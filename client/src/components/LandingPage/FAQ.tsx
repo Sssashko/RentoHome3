@@ -5,7 +5,7 @@ type FAQItem = { q: string; a: string }
 const faqs: FAQItem[] = [
   {
     q: 'How do I book a home?',
-    a: `Select a listing on the “Listings” page, choose your check‑in and check‑out dates, then click “Reserve”. You’ll receive a confirmation email once your booking is complete.`,
+    a: `Select a listing on the “Listings” page, choose your check-in and check-out dates, then click “Reserve”. You’ll receive a confirmation email once your booking is complete.`,
   },
   {
     q: 'What payment methods are accepted?',
@@ -17,7 +17,7 @@ const faqs: FAQItem[] = [
   },
   {
     q: 'Why can’t I upload my photos?',
-    a: `Make sure your images are JPG or PNG and under 5 MB. If you still have issues, clear your cache or try a different browser.`,
+    a: `Make sure your images are JPG or PNG and under 5 MB. If you still have issues, clear your cache or try a different browser.`,
   },
   {
     q: 'Who do I contact for technical support?',
@@ -25,17 +25,23 @@ const faqs: FAQItem[] = [
   },
 ]
 
+interface AccProps {
+  item: FAQItem
+  open: boolean
+  onToggle: () => void
+}
+
 const FAQ: React.FC = () => {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section className="bg-white py-16 px-4">
+    <section className="bg-white dark:bg-gray-800 py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl font-extrabold text-center text-blue-600 mb-12">
           Frequently&nbsp;Asked&nbsp;Questions
         </h2>
 
-        <ul className="space-y-4">
+        <ul className="space-y-6">
           {faqs.map((item, i) => (
             <Accordion
               key={i}
@@ -50,53 +56,45 @@ const FAQ: React.FC = () => {
   )
 }
 
-export default FAQ
+const Accordion: React.FC<AccProps> = ({ item, open, onToggle }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState(0)
 
-/* ---------- sub‑component with smooth height animation ---------- */
+  useEffect(() => {
+    setHeight(open && ref.current ? ref.current.scrollHeight : 0)
+  }, [open])
 
-interface AccProps {
-  item: FAQItem
-  open: boolean
-  onToggle: () => void
+  return (
+    <li className="rounded-lg bg-white dark:bg-gray-800 shadow-lg dark:shadow-black/50 overflow-hidden">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      >
+        <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          {item.q}
+        </span>
+        <span
+          className={`text-blue-600 dark:text-blue-400 transform transition-transform duration-300 ${
+            open ? 'rotate-90' : ''
+          }`}
+        >
+          ▶
+        </span>
+      </button>
+
+      <div
+        style={{ maxHeight: height }}
+        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+      >
+        <div
+          ref={ref}
+          className="px-6 py-4 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-inner"
+        >
+          {item.a}
+        </div>
+      </div>
+    </li>
+  )
 }
 
-/* ---------- simplified accordion (no gradient) ---------- */
-
-const Accordion: React.FC<AccProps> = ({ item, open, onToggle }) => {
-    const ref = useRef<HTMLDivElement>(null)
-    const [height, setHeight] = useState(0)
-  
-    useEffect(() => {
-      setHeight(open && ref.current ? ref.current.scrollHeight : 0)
-    }, [open])
-  
-    return (
-      <li className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <button
-          onClick={onToggle}
-          className="w-full flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-        >
-          <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            {item.q}
-          </span>
-          <span
-            className={`text-blue-600 dark:text-blue-400 transform transition-transform duration-300 ${
-              open ? 'rotate-90' : ''
-            }`}
-          >
-            ▶
-          </span>
-        </button>
-  
-        <div
-          style={{ maxHeight: height }}
-          className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-        >
-          <div ref={ref} className="px-6 py-4 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-            {item.a}
-          </div>
-        </div>
-      </li>
-    )
-  }
-  
+export default FAQ

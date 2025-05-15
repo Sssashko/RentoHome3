@@ -1,11 +1,12 @@
+import API from 'api';  // Axios instance
 
-import API from 'api';  // Ваш Axios-инстанс
-
+// Delete a user by their ID
 const deleteUser = async (userId: number) => {
-  // Формируем DELETE-запрос к /users/:id
+  // send DELETE request to /users/:id
   const { data } = await API.delete(`/users/${userId}`, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
+  // return server response
   return data;
 };
 

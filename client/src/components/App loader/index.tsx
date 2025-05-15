@@ -1,3 +1,4 @@
+// full-screen loading spinner component
 const AppLoader = () => (
 	<div className="flex min-h-screen items-center justify-center bg-neutral-800">
 		<div className="loader mx-auto flex h-5 w-fit items-center justify-center">

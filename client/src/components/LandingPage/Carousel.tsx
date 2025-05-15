@@ -1,14 +1,18 @@
+// Simple image carousel: rotates through images every few seconds
+
 import React, { useState, useEffect } from 'react';
 
 interface CarouselProps {
   images: string[];
-  interval?: number;
+  interval?: number; // time in ms between slides
 }
 
 const Carousel: React.FC<CarouselProps> = ({ images, interval = 4000 }) => {
+  // current slide index
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    // advance index on a timer
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, interval);

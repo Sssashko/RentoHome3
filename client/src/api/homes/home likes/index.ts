@@ -1,9 +1,9 @@
-import API from 'api'; // axios instance
+import API from 'api'
 
-export const likeHomeQuery = async (homeId: number) => {
-  const { data } = await API.patch(`/homes/${homeId}/like`);
-  // data.home => Обновлённый дом
-  return data.home;
-};
+const likeHomeQuery = async (homeId: number) => {
+  // toggle like on the home
+  const { data } = await API.patch(`/homes/${homeId}/like`)
+  return data.home  // updated home object
+}
 
 export default likeHomeQuery

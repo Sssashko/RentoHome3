@@ -1,3 +1,5 @@
+// Highlights three main features in cards
+
 import React from 'react';
 
 const FeaturesSection: React.FC = () => (

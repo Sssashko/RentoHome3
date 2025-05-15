@@ -1,17 +1,18 @@
-import { NavLink } from 'react-router-dom';
-import { useAuthStore } from 'store';
-import Auth from './components/Auth';
-import MobileMenu from './components/Mobile menu';
-import { ThemeToggle } from '../shared/ThemeToogle'; // Импортируем компонент ThemeToggle
+import { NavLink } from 'react-router-dom'
+import { useAuthStore } from 'store'         // global auth state
+import Auth from './components/Auth'         // user menu when logged in
+import MobileMenu from './components/Mobile menu' // mobile dropdown menu
+import { ThemeToggle } from '../shared/ThemeToogle' // light/dark switch
 
 const Navbar = () => {
-  const { user } = useAuthStore();
+  const { user } = useAuthStore()           // get current user (null if guest)
 
   return (
     <nav className="w-full bg-white shadow-md dark:bg-gray-800">
       <div className="flex h-20 items-center justify-between px-6 md:px-16">
-        {/* Left side: logo and main links */}
+        {/* LEFT: Logo and main links */}
         <div className="flex items-center gap-8">
+          {/* Logo links to home */}
           <NavLink to="/" className="flex items-center gap-3">
             <img src="/logo.png" alt="RentoHome" className="h-14 w-14" />
             <h1 className="text-3xl font-bold text-[#0093d8] dark:text-blue-400">
@@ -19,6 +20,7 @@ const Navbar = () => {
             </h1>
           </NavLink>
 
+          {/* Desktop-only navigation links */}
           <div className="hidden md:flex items-center gap-8">
             <NavLink
               to="/aboutus"
@@ -41,10 +43,9 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Right side: auth, theme toggle, and mobile menu */}
+        {/* RIGHT: Auth buttons, theme toggle, mobile menu */}
         <div className="hidden md:flex items-center gap-4">
-          {/* Кнопка переключения темы */}
-
+          {/* If no user, show login/register */}
           {!user && (
             <div className="flex items-center gap-4">
               <NavLink
@@ -62,18 +63,18 @@ const Navbar = () => {
             </div>
           )}
 
-
+          {/* If user is logged in, show profile menu */}
           {user && <Auth />}
 
-          
-          <ThemeToggle /> 
+          {/* Theme switch (light / dark) */}
+          <ThemeToggle />
         </div>
 
-        {/* Кнопка мобильного меню */}
+        {/* Mobile hamburger menu (always visible on small screens) */}
         <MobileMenu />
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

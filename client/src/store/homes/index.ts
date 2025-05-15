@@ -3,29 +3,37 @@ import { Home } from 'types';
 import { create } from 'zustand';
 
 interface Store {
-  homes: Home[];
-  fetchHomes: () => Promise<void>;
-  createHome: (home: Home) => void;
-  editHome: (home: Home) => void;
-  removeHome: (id: number) => void;
+  homes: Home[];                // stored list of homes
+  fetchHomes: () => Promise<void>; // load homes from backend
+  createHome: (home: Home) => void; // add new home
+  editHome: (home: Home) => void;   // update existing home
+  removeHome: (id: number) => void; // delete home by id
 }
 
 const useHomesStore = create<Store>()((set) => ({
-  homes: [],
+  homes: [],                    // initial: empty listcapital
+
   fetchHomes: async () => {
-    const homes = await fetchHomeQuery();
-    set({ homes });
+    const homes = await fetchHomeQuery(); // fetch from API
+    set({ homes });              // replace state
   },
-  createHome: (home: Home) => {
-    set((state) => ({ homes: [...state.homes, home] }));
+
+  createHome: (home) => {
+    set((state) => ({ homes: [...state.homes, home] })); // append new
   },
-  editHome: (editedHome: Home) => {
+
+  editHome: (editedHome) => {
     set(({ homes }) => ({
-      homes: homes.map((home) => (home.id !== editedHome.id ? home : editedHome)),
+      homes: homes.map((home) =>
+        home.id !== editedHome.id ? home : editedHome // replace matching
+      ),
     }));
   },
-  removeHome: (id: number) => {
-    set(({ homes }) => ({ homes: homes.filter((home) => home.id !== id) }));
+
+  removeHome: (id) => {
+    set(({ homes }) => ({
+      homes: homes.filter((home) => home.id !== id), // filter out
+    }));
   },
 }));
 

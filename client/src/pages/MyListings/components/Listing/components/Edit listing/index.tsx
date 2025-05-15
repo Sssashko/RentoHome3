@@ -1,6 +1,6 @@
 import { updateHomeQuery } from 'api/homes'
 import { useCreateProtectedRequest } from 'hooks'
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'

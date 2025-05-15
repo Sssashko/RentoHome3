@@ -3,15 +3,23 @@ import { NavLink } from 'react-router-dom'
 import { useAuthStore } from 'store'
 
 interface Props {
-	children: ReactNode
+	children: ReactNode // content to show if user is logged in
 }
 
+/**
+ * Wraps pages that require authentication.
+ * If user is not logged in, shows a prompt to sign in.
+ */
 const ProtectedPage = ({ children }: Props) => {
-	const { user } = useAuthStore()
+	const { user } = useAuthStore() // get current user from global store
 
-	return user ? (
-		children
-	) : (
+	// if user exists, render the protected content
+	if (user) {
+		return <>{children}</>
+	}
+
+	// if no user, show message and link to login page
+	return (
 		<div className="m-auto text-white">
 			<h1 className="text-center text-2xl font-semibold">
 				This page is protected. <br className="sm:hidden" /> Sign in to view content

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuthStore } from 'store';
 import updateProfile from 'api/profile/profile';
 import deleteUserQuery from 'api/delete user/user'; // тот самый запрос для удаления
