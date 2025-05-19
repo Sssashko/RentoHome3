@@ -265,7 +265,7 @@ const HomePreview: React.FC = () => {
           </div>
 
           {/* amenities */}
-          <div className="p-4 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md">
+          <div className="p-4 bg-gray-100 dark:bg-gray-600 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Amenities</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-base text-gray-700 dark:text-gray-200">
               <div className="flex items-center gap-2">
