@@ -1,29 +1,32 @@
-import pool from 'database';
-import { ResultSetHeader } from 'mysql2/promise';
+import pool from 'database'
+import { ResultSetHeader } from 'mysql2/promise'
 
 interface CommentData {
-  home_id: number;
-  text: string;
+  home_id: number
+  text: string
 }
 
 /**
- * Сохраняет комментарий в таблицу `comments`.
- * @param commentData - { home_id, text }
- * @param userId - id пользователя
- * @returns id вставленного комментария
+ * Insert a new comment into `comments` table.
+ * @param commentData - contains home_id and text
+ * @param userId - ID of the commenting user
+ * @returns insertId of the new comment
  */
 const createComment = async (commentData: CommentData, userId: number) => {
-  const { home_id, text } = commentData;
+  const { home_id, text } = commentData
 
-  // Убедитесь, что home_id и userId существуют в таблицах homes / users
-  // или сервер выдаст ошибку внешнего ключа
-
+  // SQL insert; relies on valid home_id and userId (FK constraints)
   const sql = `
     INSERT INTO comments (home_id, user_id, text)
     VALUES (?, ?, ?)
-  `;
-  const [result] = await pool.query<ResultSetHeader>(sql, [home_id, userId, text]);
-  return result.insertId; // id нового комментария
-};
+  `
+  const [result] = await pool.query<ResultSetHeader>(sql, [
+    home_id,
+    userId,
+    text
+  ])
 
-export default createComment;
+  return result.insertId    // return new comment ID
+}
+
+export default createComment

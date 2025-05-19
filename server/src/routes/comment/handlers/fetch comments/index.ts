@@ -1,8 +1,9 @@
-import pool from 'database';
+import pool from 'database'
 
 /**
- * Возвращает все комментарии к конкретному дому
- * @param homeId - ID дома
+ * Fetch all comments for a specific home, newest first.
+ * @param homeId - ID of the home to get comments for
+ * @returns array of comment rows
  */
 export async function fetchCommentsByHomeId(homeId: number) {
   const sql = `
@@ -10,9 +11,9 @@ export async function fetchCommentsByHomeId(homeId: number) {
     FROM comments
     WHERE home_id = ?
     ORDER BY created_at DESC
-  `;
-  const [rows] = await pool.query(sql, [homeId]);
-  return rows; // массив комментариев
+  `
+  const [rows] = await pool.query(sql, [homeId])
+  return rows
 }
 
 export default fetchCommentsByHomeId

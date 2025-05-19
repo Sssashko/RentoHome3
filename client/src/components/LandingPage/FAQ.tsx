@@ -35,13 +35,12 @@ const FAQ: React.FC = () => {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section className="bg-white dark:bg-gray-800 py-16 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl font-extrabold text-center text-blue-600 mb-12">
-          Frequently&nbsp;Asked&nbsp;Questions
+    <section className="bg-white dark:bg-gray-800 py-16">
+      <div className="w-full max-w-4xl mx-auto px-4">
+        <h2 className="text-4xl font-extrabold text-center text-blue-600 mb-12 break-words">
+          Frequently Asked Questions
         </h2>
-
-        <ul className="space-y-6">
+        <ul className="w-full space-y-6">
           {faqs.map((item, i) => (
             <Accordion
               key={i}
@@ -65,7 +64,7 @@ const Accordion: React.FC<AccProps> = ({ item, open, onToggle }) => {
   }, [open])
 
   return (
-    <li className="rounded-lg bg-white dark:bg-gray-800 shadow-lg dark:shadow-black/50 overflow-hidden">
+    <li className="w-full rounded-lg bg-white dark:bg-gray-800 shadow-lg dark:shadow-black/50 overflow-hidden">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition"

@@ -2,18 +2,23 @@ import pool from 'database'
 import { RowDataPacket } from 'mysql2'
 import { Image } from 'types'
 
-const fetchRelatedImages = async (homeId: number) => {
-	const sql = `
-    SELECT * FROM images
-    WHERE home = ?
-    `
-	const [rows] = await pool.query<RowDataPacket[]>(sql, [homeId])
+/**
+ * Fetch all image URLs for a specific home.
+ * @param homeId - ID of the home
+ * @returns array of URL strings, or null if none found
+ */
+const fetchRelatedImages = async (homeId: number): Promise<string[] | null> => {
+  const sql = `
+    SELECT url
+    FROM images
+    WHERE home_id = ?
+  `
+  const [rows] = await pool.query<RowDataPacket[]>(sql, [homeId])
 
-	if (rows.length) {
-		return (rows as Image[]).map(({ url }) => url)
-	} else {
-		return null
-	}
+  // if there are results, extract just the URL from each row
+  return rows.length
+    ? (rows as Image[]).map(({ url }) => url)
+    : null
 }
 
 export default fetchRelatedImages

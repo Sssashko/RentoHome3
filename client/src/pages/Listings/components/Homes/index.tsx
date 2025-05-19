@@ -1,9 +1,7 @@
-// src/pages/Listings/components/Homes/index.tsx
 import React, { useState, useEffect, useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
 import { FaHeart } from 'react-icons/fa'
 import toast from 'react-hot-toast'
-
 import useFilteredHomes from 'hooks/useFilteredHomes'
 import { likeHomeQuery } from 'api/homes'
 import fetchUserLikes from 'api/homes/fetch likes'
@@ -11,16 +9,19 @@ import { useAuthStore } from 'store'
 import { Home } from 'types'
 
 const Homes: React.FC = () => {
+  // get filtered homes from custom hook
   const homes = useFilteredHomes()
   const [localHomes, setLocalHomes] = useState<Home[]>(homes)
   const [likedIds, setLikedIds] = useState<number[]>([])
   const { user } = useAuthStore()
   const currentUserId = user?.id
 
+  // update localHomes when filters change
   useEffect(() => {
     setLocalHomes(homes)
   }, [homes])
 
+  // fetch liked home IDs for the current user
   useEffect(() => {
     if (!currentUserId) return
     ;(async () => {
@@ -35,16 +36,19 @@ const Homes: React.FC = () => {
     })()
   }, [currentUserId])
 
+  // sort homes by likes descending
   const sortedHomes = useMemo(
     () => [...localHomes].sort((a, b) => b.likes - a.likes),
     [localHomes]
   )
 
+  // get ranking (TOP 1–3) based on sorted position
   const getRank = (id: number) => {
     const idx = sortedHomes.findIndex(h => h.id === id)
     return idx >= 0 && idx < 3 ? idx + 1 : null
   }
 
+  // toggle like on a home
   const handleLike = async (homeId: number) => {
     const isLiked = likedIds.includes(homeId)
     try {
@@ -56,6 +60,7 @@ const Homes: React.FC = () => {
         toast.success('Liked!')
         setLikedIds(ids => [...ids, homeId])
       }
+      // update like count locally
       setLocalHomes(prev =>
         prev.map(h => (h.id === homeId ? { ...h, likes: updatedHome.likes } : h))
       )
@@ -75,7 +80,7 @@ const Homes: React.FC = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 mt-6">
       {localHomes.map(home => {
-        const { id, title, price, images, square, country, class: homeClass, likes } = home
+        const { id, title, price, images, square, country, class: homeClass, type, likes } = home
         const formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
         const rank = getRank(id)
 
@@ -98,7 +103,7 @@ const Homes: React.FC = () => {
               )}
               <button
                 onClick={e => {
-                  e.preventDefault()
+                  e.preventDefault() // prevent navigation
                   if (!currentUserId) {
                     toast.error('Please log in to like!')
                     return
@@ -125,7 +130,10 @@ const Homes: React.FC = () => {
               <p className="text-md text-gray-700 dark:text-gray-400">
                 {country} • {homeClass}
               </p>
-              <p className="text-md text-gray-700 dark:text-gray-400">Area: {square} m²</p>
+              <div className="flex justify-between text-md text-gray-700 dark:text-gray-400">
+                <p>Area: {square} m²</p>
+                <p>🏠 {type}</p>
+              </div>
               <p className="text-lg font-bold text-gray-900 dark:text-white">
                 {formattedPrice}$ / night
               </p>

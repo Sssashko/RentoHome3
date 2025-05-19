@@ -33,9 +33,11 @@ CREATE TABLE images (
     name VARCHAR(255) NOT NULL,
     originalName VARCHAR(255) NOT NULL,
     url VARCHAR(255) NOT NULL,
-    home_id INT NOT NULL,
-    FOREIGN KEY (home_id) REFERENCES homes(id)
-        ON DELETE CASCADE                             
+    home_id INT NULL,
+    user_id INT NULL,
+    position INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (home_id) REFERENCES homes(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- ---------- refresh tokens ----------

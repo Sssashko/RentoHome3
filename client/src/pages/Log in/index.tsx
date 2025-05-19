@@ -1,46 +1,54 @@
-import { logInQuery } from 'api/auth';
-import { isAxiosError } from 'axios';
-import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuthStore } from 'store';
+import { logInQuery } from 'api/auth'
+import { isAxiosError } from 'axios'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuthStore } from 'store'
 
 type Data = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 const LogIn = () => {
-  const navigate = useNavigate();
-  const { setUser } = useAuthStore();
+  const navigate = useNavigate()               // hook to programmatically change routes
+  const { setUser } = useAuthStore()           // action to store authenticated user in global state
 
+  // initialize react-hook-form
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<Data>();
+  } = useForm<Data>()
 
+  // form submit handler
   const submit = async (data: Data) => {
-    toast.promise(logInQuery(data), {
-      loading: 'Logging in...',
-      success: (user) => {
-        setUser(user);
-        navigate('/ProfilePage');
-        return `Successfully logged in as ${user.username}`;
-      },
-      error: (e) => {
-        if (isAxiosError(e) && e.response?.status === 401) {
-          return 'Wrong credentials!';
-        }
-        return 'Error while trying to log in';
-      },
-    });
-  };
+    // show toast notifications for login promise
+    toast.promise(
+      logInQuery(data),                        // API call returning user object
+      {
+        loading: 'Logging in...',              // shown while request is pending
+        success: (user) => {
+          setUser(user)                        // save user in Zustand store
+          navigate('/ProfilePage')             // redirect to profile page
+          return `Successfully logged in as ${user.username}`  
+        },
+        error: (e) => {
+          // if backend returns 401, show specific message
+          if (isAxiosError(e) && e.response?.status === 401) {
+            return 'Wrong credentials!'
+          }
+          return 'Error while trying to log in'  // generic error message
+        },
+      }
+    )
+  }
 
   return (
     <div className="flex items-center justify-center py-10 bg-gray-50 dark:bg-gray-900">
-      {/* Обертка формы */}
+      {/* form card */}
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+        {/* header */}
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
           Welcome Back
         </h1>
@@ -48,8 +56,9 @@ const LogIn = () => {
           Log in to your account
         </p>
 
+        {/* form start */}
         <form onSubmit={handleSubmit(submit)}>
-          {/* Email */}
+          {/* email input */}
           <div className="mb-5">
             <input
               type="text"
@@ -61,7 +70,7 @@ const LogIn = () => {
             />
           </div>
 
-          {/* Password */}
+          {/* password input */}
           <div className="mb-5">
             <input
               type="password"
@@ -73,7 +82,7 @@ const LogIn = () => {
             />
           </div>
 
-          {/* Submit button */}
+          {/* submit button */}
           <button
             type="submit"
             className="w-full bg-blue-600 dark:bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
@@ -81,6 +90,7 @@ const LogIn = () => {
             Log In
           </button>
 
+          {/* link to signup page */}
           <div className="mt-6 text-center">
             <NavLink
               to="/signup"
@@ -92,7 +102,7 @@ const LogIn = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LogIn;
+export default LogIn

@@ -1,146 +1,153 @@
-import { PageNotFound } from 'pages';
-import { useState, useEffect } from 'react';
-import { FcNext, FcPrevious } from 'react-icons/fc';
-import { FaCheck } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
-import { useHomesStore } from 'store';
-import { useAuthStore } from 'store'; // <-- импорт auth
-import { ImageViewer } from './components';
-import deleteComment from 'api/comments/delete comment';
+import { PageNotFound } from 'pages'
+import { useState, useEffect } from 'react'
+import { FcNext, FcPrevious } from 'react-icons/fc'
+import { FaCheck } from 'react-icons/fa'
+import { useParams } from 'react-router-dom'
+import { useHomesStore } from 'store'
+import { useAuthStore } from 'store' // auth store for current user
+import { ImageViewer } from './components'
+import deleteComment from 'api/comments/delete comment'
+import toast from 'react-hot-toast'           // import toast for notifications
 
-const HomePreview = () => {
-  const { id } = useParams();
-  const { homes } = useHomesStore();
+const HomePreview: React.FC = () => {
+  // Read the `id` param from the URL to determine which home to show
+  const { id } = useParams()
+  const { homes } = useHomesStore()        // retrieve all homes from Zustand
+  const { user } = useAuthStore()          // get current user (if any)
+  const currentUserId = user?.id
 
-  // Берём текущего пользователя из auth-хранилища (пр. user.id = 7)
-  const { user } = useAuthStore();
-  const currentUserId = user?.id;
+  // State for image carousel index and full‐screen preview
+  const [currentImage, setCurrentImage] = useState(0)
+  const [previewImage, setPreviewImage] = useState<null | string>(null)
 
-  const [currentImage, setCurrentImage] = useState(0);
-  const [previewImage, setPreviewImage] = useState<null | string>(null);
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
+  // Booking date selections
+  const [checkIn, setCheckIn] = useState('')
+  const [checkOut, setCheckOut] = useState('')
 
-  // Состояния для комментариев
-  const [comments, setComments] = useState<any[]>([]);
-  const [newComment, setNewComment] = useState('');
+  // Comments list and new comment draft
+  const [comments, setComments] = useState<any[]>([])
+  const [newComment, setNewComment] = useState('')
 
-  // Находим нужный дом
-  const home = id ? homes.find((h) => h.id === Number(id)) : null;
-  if (!home) return <PageNotFound />;
+  // Find the home matching the URL id, show 404 if not found
+  const home = id ? homes.find((h) => h.id === Number(id)) : null
+  if (!home) return <PageNotFound />
 
   const {
     title,
     price,
+    type,
     square,
     country,
     class: homeClass,
     description,
     images,
     user: { username, email, avatar },
-  } = home;
+  } = home
 
-  // Подгрузка комментариев
+  // Fetch existing comments for this home on mount / when home changes
   useEffect(() => {
-    if (!home) return;
+    if (!home) return
     fetch(`http://localhost:4000/homes/${home.id}/comments`)
       .then((r) => r.json())
       .then((data) => {
         if (data.success) {
-          setComments(data.comments);
+          setComments(data.comments)
         }
       })
-      .catch((err) => console.error('Error fetching comments:', err));
-  }, [home]);
+      .catch((err) => console.error('Error fetching comments:', err))
+  }, [home])
 
-  // Создание нового комментария
+  // Post a new comment via API
   const handleCreateComment = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim()) return
+
+    // Show error if not logged in
     if (!currentUserId) {
-      console.error('No user is logged in, cannot create comment');
-      return;
+      toast.error('You must be logged in to leave a comment')
+      return
     }
+
     try {
-      // Передаём home_id, user_id и text в теле запроса (JSON)
       const res = await fetch(`http://localhost:4000/homes/${home.id}/comments`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Если используете JWT, можно добавить:
-          // 'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           home_id: home.id,
           user_id: currentUserId,
-          text: newComment
+          text: newComment,
         }),
-      });
-      const data = await res.json();
+      })
+      const data = await res.json()
       if (data.success) {
-        setComments((prev) => [...prev, data.comment]);
-        setNewComment('');
+        setComments((prev) => [...prev, data.comment]) // append new comment
+        setNewComment('')                              // clear textarea
+        toast.success('Comment posted successfully')    // feedback toast
       } else {
-        console.error('Error creating comment:', data.message || 'Unknown error');
+        toast.error(data.message || 'Failed to post comment')
       }
     } catch (err) {
-      console.error('Error creating comment:', err);
+      console.error('Error creating comment:', err)
+      toast.error('An error occurred while posting comment')
     }
-  };
+  }
 
-  // Удаление комментария
+  // Delete a comment and update UI
   const handleDeleteComment = async (commentId: number) => {
     try {
-      await deleteComment(commentId);
-      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      await deleteComment(commentId)
+      setComments((prev) => prev.filter((c) => c.id !== commentId)) // remove deleted
+      toast.success('Comment deleted')
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      console.error('Error deleting comment:', error)
+      toast.error('Failed to delete comment')
     }
-  };
+  }
 
-  // Кнопки переключения картинок
+  // Navigate through images in the carousel
   const prevImage = () =>
-    setCurrentImage(currentImage > 0 ? currentImage - 1 : images.length - 1);
+    setCurrentImage(currentImage > 0 ? currentImage - 1 : images.length - 1)
   const nextImage = () =>
-    setCurrentImage(currentImage < images.length - 1 ? currentImage + 1 : 0);
+    setCurrentImage(currentImage < images.length - 1 ? currentImage + 1 : 0)
 
+  // Compute and render total booking price based on selected dates
   const renderPriceInfo = () => {
     if (!checkIn || !checkOut) {
       return (
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Select check-in and check-out dates to see total
         </p>
-      );
+      )
     }
-    const inDate = new Date(checkIn);
-    const outDate = new Date(checkOut);
-    const diffInMs = outDate.getTime() - inDate.getTime();
-    const oneDayMs = 1000 * 60 * 60 * 24;
-
-    const totalDays = Math.max(1, Math.round(diffInMs / oneDayMs) + 1);
-    const nights = Math.max(1, totalDays - 1);
-    const totalPrice = nights * price;
+    const inDate = new Date(checkIn)
+    const outDate = new Date(checkOut)
+    const diffInMs = outDate.getTime() - inDate.getTime()
+    const oneDayMs = 1000 * 60 * 60 * 24
+    const totalDays = Math.max(1, Math.round(diffInMs / oneDayMs) + 1)
+    const nights = Math.max(1, totalDays - 1)
+    const totalPrice = nights * price
 
     return (
       <>
         <p className="text-gray-700 dark:text-gray-300 mt-2">
-          {totalDays} day(days), {nights} night(nights)
+          {totalDays} day(s), {nights} night(s)
         </p>
         <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
           Total: ${totalPrice.toLocaleString()}
         </p>
       </>
-    );
-  };
+    )
+  }
 
   return (
-    <div className="flex justify-center my-10">
-      <div className="w-full max-w-[1200px] bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Левая колонка — изображения */}
+    <div className="min-h-screen bg-gray-150 dark:bg-black py-12 px-4">
+       <div className="mx-auto max-w-6xl bg-white/70 dark:bg-gray-800 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-[28px] shadow-xl p-8 transition-all duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* left column: image gallery */}
           <div>
             <div className="relative w-full h-[400px] md:h-[450px] overflow-hidden rounded-lg shadow-md">
               {images.length > 0 && (
                 <>
+                  {/* Main image — clicking opens full-screen preview */}
                   <img
                     src={images[currentImage].url}
                     onClick={() => setPreviewImage(images[currentImage].url)}
@@ -160,6 +167,7 @@ const HomePreview = () => {
                 </>
               )}
             </div>
+            {/* Thumbnail strip for quick navigation */}
             <div className="mt-4 flex flex-wrap gap-3 justify-center">
               {images.map((image, index) => (
                 <img
@@ -175,7 +183,7 @@ const HomePreview = () => {
             </div>
           </div>
 
-          {/* Правая колонка */}
+          {/* right column: details & booking */}
           <div className="flex flex-col justify-between">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -186,7 +194,9 @@ const HomePreview = () => {
               </p>
               <div className="flex items-center mt-2">
                 <span className="text-yellow-500 text-3xl">★★★★☆</span>
-                <span className="ml-3 text-xl text-gray-600 dark:text-gray-300">4.7 / 5</span>
+                <span className="ml-3 text-xl text-gray-600 dark:text-gray-300">
+                  4.7 / 5
+                </span>
               </div>
               <div className="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
                 <p className="font-medium">
@@ -198,8 +208,13 @@ const HomePreview = () => {
                 <p className="font-medium">
                   📏 Square: <span className="font-semibold">{square} m²</span>
                 </p>
+                <p className="font-medium">
+                  🏢 Type: <span className="font-semibold">{type}</span>
+                </p>
               </div>
             </div>
+
+            {/* booking form */}
             <div className="mt-6 border-t pt-4">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Booking Dates
@@ -213,7 +228,10 @@ const HomePreview = () => {
                     type="date"
                     value={checkIn}
                     onChange={(e) => setCheckIn(e.target.value)}
-                    className="border rounded-md px-2 py-1"
+                    className="border rounded-md px-2 py-1
+                      bg-white text-gray-900
+                      dark:bg-gray-700 dark:text-gray-100
+                      focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -224,7 +242,10 @@ const HomePreview = () => {
                     type="date"
                     value={checkOut}
                     onChange={(e) => setCheckOut(e.target.value)}
-                    className="border rounded-md px-2 py-1"
+                    className="border rounded-md px-2 py-1
+                      bg-white text-gray-900
+                      dark:bg-gray-700 dark:text-gray-100
+                      focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -236,14 +257,14 @@ const HomePreview = () => {
           </div>
         </div>
 
+        {/* description section */}
         <div className="mt-8 space-y-6">
-          {/* Описание */}
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Description</h3>
             <p className="mt-2 text-gray-600 dark:text-gray-400">{description}</p>
           </div>
 
-          {/* Удобства */}
+          {/* amenities */}
           <div className="p-4 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Amenities</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-base text-gray-700 dark:text-gray-200">
@@ -274,7 +295,7 @@ const HomePreview = () => {
             </div>
           </div>
 
-          {/* Инфа о владельце */}
+          {/* host info */}
           <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center gap-4 shadow-md">
             <img
               src={avatar}
@@ -282,24 +303,19 @@ const HomePreview = () => {
               alt="User Avatar"
             />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {username}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{username}</h3>
               <p className="text-sm text-gray-500 dark:text-gray-300">
                 📧 Email: <span className="text-gray-800 dark:text-white">{email}</span>
               </p>
             </div>
           </div>
 
-          {/* Карта */}
+          {/* map iframe */}
           <div className="p-4 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Location</h3>
             <iframe
-              title="Random Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224578.33324004497!2d-74.11808619553954!3d40.705825363980515!2m3!1f0!2f0!
-3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2451b8adfac37%3A0x7349aa2bb0251b29!
-2sManhattan%2C%20New%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1610145486556!
-5m2!1sen!2sus"
+              title="Location"
+              src="https://maps.google.com/maps?q=Manhattan,NYC&z=13&output=embed"
               width="100%"
               height="300"
               allowFullScreen
@@ -309,18 +325,16 @@ const HomePreview = () => {
           </div>
         </div>
 
-        {/* Блок комментариев */}
+        {/* comments section */}
         <div className="mt-8">
-          <h3 className="text-xl font-bold mb-4">Comments</h3>
-
+          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Comments</h3>
           {comments.map((c) => (
             <div
               key={c.id}
               className="border p-3 mb-2 rounded-md bg-gray-50 dark:bg-gray-700"
             >
               <p className="text-gray-800 dark:text-gray-200">{c.text}</p>
-              <small className="text-gray-400">{`Comment #${c.id} by user #${c.user_id || ''}`}</small>
-
+              <small className="text-gray-400">{`Comment #${c.id}`}</small>
               {c.user_id === currentUserId && (
                 <button
                   onClick={() => handleDeleteComment(c.id)}
@@ -332,12 +346,16 @@ const HomePreview = () => {
             </div>
           ))}
 
+          {/* new comment textarea */}
           <div className="mt-4">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="border w-full p-2 rounded"
               placeholder="Write a comment..."
+              className="border w-full p-2 rounded
+                bg-white text-gray-900
+                dark:bg-gray-700 dark:text-gray-100
+                focus:ring-2 focus:ring-blue-500 resize-none"
             />
             <button
               onClick={handleCreateComment}
@@ -349,11 +367,12 @@ const HomePreview = () => {
         </div>
       </div>
 
+      {/* full-screen preview overlay */}
       {previewImage && (
         <ImageViewer image={previewImage} exit={() => setPreviewImage(null)} />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default HomePreview;
+export default HomePreview

@@ -1,28 +1,32 @@
-import multer from 'multer';
-import { extname } from 'path';
-import { v4 as uuid } from 'uuid';
+import multer from 'multer'
+import { extname } from 'path'
+import { v4 as uuid } from 'uuid'
 
-// Allowed file extensions
-const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+// Only allow these image file extensions
+const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif']
 
+// Configure disk storage for uploaded files
 const storage = multer.diskStorage({
-	destination: function (req, file, callBack) {
-		callBack(null, 'images/');
-	},
-	filename: function (req, file, callBack) {
-		const extension = extname(file.originalname).toLowerCase();
-		
-		if (!allowedExtensions.includes(extension)) {
-			return callBack(new Error('Invalid file type'), '');
-		}
+  destination: (_req, _file, cb) => {
+    cb(null, 'images/') // save into the local images/ folder
+  },
+  filename: (_req, file, cb) => {
+    const extension = extname(file.originalname).toLowerCase()
 
-		callBack(null, uuid() + extension);
-	}
-});
+    // Reject disallowed file types
+    if (!allowedExtensions.includes(extension)) {
+      return cb(new Error('Invalid file type'), '')
+    }
 
-const upload = multer({ 
-	storage,
-	limits: { fileSize: 5 * 1024 * 1024 } // Limit file size to 5MB
-});
+    // Use a UUID to avoid name collisions, keep original extension
+    cb(null, uuid() + extension)
+  }
+})
 
-export default upload;
+// Create the multer middleware with 5MB file size limit
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }
+})
+
+export default upload

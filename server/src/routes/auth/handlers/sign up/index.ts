@@ -1,43 +1,76 @@
-import { hash } from 'bcrypt'
-import { SERVER_URL } from 'config'
-import { storeRefreshToken } from 'database/queries/refresh tokens'
-import { createUser, fetchUserByEmail } from 'database/queries/users'
 import { Request, Response } from 'express'
-import { createAccessToken, createRefreshToken } from 'helpers/jwt'
+import path from 'path'
+import fs from 'fs'
+import { hash } from 'bcrypt'
+import pool from 'database'
+import createUser from 'database/queries/users/create user'
+import createImage from 'database/queries/images/create image'
+import { SERVER_URL } from 'config'
+import { deleteFiles } from 'helpers'
+
+// Default avatar filename when user doesn't upload one
+const DEFAULT_AVATAR_FILENAME = 'guest.png'
+
+// Path to public image folder
+const IMAGES_DIR = path.join(__dirname, '..', '..', '..', 'public', 'images')
 
 const handleSignUp = async (req: Request, res: Response) => {
-	try {
-		const username = req.body.username as string
-		const email = req.body.email as string
-		const password = await hash(req.body.password, 10)
+  try {
+    const { username, email, password } = req.body
 
-		const avatar = `${SERVER_URL}/images/${req.file ? req.file.filename : 'guest.png'}`
+    // Check if a user with this email already exists
+    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [email])
+    if ((existing as any[]).length > 0) {
+      return res.status(409).json({ message: 'Email already in use' })
+    }
 
-		const userExists = await fetchUserByEmail(email)
+    // Determine avatar filename: uploaded one or fallback to default
+    let filename: string
+    if (req.file) {
+      filename = req.file.filename
+    } else {
+      filename = DEFAULT_AVATAR_FILENAME
+      const defPath = path.join(IMAGES_DIR, filename)
+      if (!fs.existsSync(defPath)) {
+        console.warn(`[SignUp] Default avatar not found at ${defPath}`)
+      }
+    }
 
-		if (userExists) {
-			return res.status(409).json('User already exists')
-		}
+    // Generate full public avatar URL
+    const avatarUrl = `${SERVER_URL}/images/${filename}`
 
-		const id = await createUser({ username, email, avatar, password })
+    // Hash the user's password before saving
+    const hashed = await hash(password, 10)
 
-		const user = { id, username, email, avatar, password }
+    // Insert the user into the database
+    const userId = await createUser({
+      username,
+      email,
+      avatar: avatarUrl,
+      password: hashed
+    })
 
-		const accessToken = createAccessToken(user)
-		const refreshToken = createRefreshToken(user)
+    // If avatar was uploaded manually, save it into images table too
+    if (req.file) {
+      await createImage(
+        filename,
+        req.file.originalname,
+        avatarUrl,
+        userId
+      )
+    }
 
-		res.cookie('accessToken', accessToken, {
-			maxAge: 1000 * 60 * 60 * 24,
-			secure: true,
-			httpOnly: true
-		})
-		await storeRefreshToken(refreshToken, user.id)
-
-		res.status(200).json(user)
-	} catch (error) {
-		console.log('Error while signing up', error)
-		res.status(500).json('Error while signing up')
-	}
+    // Return user info (excluding password)
+    res.status(201).json({
+      id: userId,
+      username,
+      email,
+      avatar: avatarUrl
+    })
+  } catch (err) {
+    console.error('[handleSignUp] Error:', err)
+    res.status(500).json({ message: 'Sign up failed' })
+  }
 }
 
 export default handleSignUp

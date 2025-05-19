@@ -3,10 +3,10 @@ import React from 'react';
 const AboutUs: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-200 dark:bg-gray-900">
-      {/* Main Content */}
+      {/* About us main section */}
       <section className="container mx-auto px-6 md:px-12 lg:px-16 py-16">
         <div className="flex flex-col lg:flex-row items-center mb-16 gap-8">
-          {/* Image */}
+          {/* left: illustration */}
           <div className="w-full lg:w-1/2">
             <img
               src="/Home1.webp"
@@ -14,7 +14,7 @@ const AboutUs: React.FC = () => {
               className="w-full h-auto object-cover rounded-lg shadow-md"
             />
           </div>
-          {/* Text */}
+          {/* right: description text */}
           <div className="w-full lg:w-1/2">
             <h2 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-4">
               Who We Are
@@ -36,7 +36,7 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
 
-        {/* Our Values / Highlights */}
+        {/* Highlights: our core values */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
             <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">Innovation</h3>
