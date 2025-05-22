@@ -57,6 +57,19 @@ const ProfilePage = () => {
   const onSubmit = async (data: FormData) => {
     if (!user) return
 
+    // If nothing really changed, bail out
+    const fileProvided = data.avatar?.length === 1
+    const pwProvided   = Boolean(data.password && data.password.length)
+    if (
+      data.username === user.username &&
+      data.email    === user.email &&
+      !pwProvided &&
+      !fileProvided
+    ) {
+      toast.error('No modifications detected')
+      return
+    }
+
     // Manual avatar file validation
     let file: File | undefined
     if (data.avatar?.length) {
