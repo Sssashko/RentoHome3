@@ -53,7 +53,8 @@ const EditListing = ({ closeModal, ...home }: Props) => {
     country: initialCountry,
     description: initialDescription,
     images: initialImages,
-    type: initialType
+    type: initialType,
+    price: initialPrice
   } = home
 
   // local state for controlled selects and image list
@@ -119,11 +120,6 @@ const EditListing = ({ closeModal, ...home }: Props) => {
     const removedImages = getRemovedImages(images, initialImages ?? [])
     // build FormData for multipart upload
     const formData = createFormData(modifiedHome, imageFiles, removedImages)
-
-    // debug log of FormData entries
-    for (const [k, v] of formData.entries()) {
-      console.log('📦 formData →', k, v)
-    }
 
     // send update request and update local store on success
     const updateReq = createProtectedRequest({
@@ -283,6 +279,7 @@ const EditListing = ({ closeModal, ...home }: Props) => {
                 </label>
                 <input
                   type="number"
+                  defaultValue={initialPrice}
                   placeholder="e.g. 1000"
                   {...register('price', {
                     required: 'Price is required',

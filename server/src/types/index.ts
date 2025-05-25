@@ -23,6 +23,7 @@ interface User {
   email: string
   avatar: string     // profile picture URL
   password: string
+  role: 'user' | 'admin'  
 }
 
 interface Image {

@@ -9,6 +9,7 @@ CREATE TABLE users (
     avatar VARCHAR(255),
     password VARCHAR(255),
     google_id VARCHAR(255) UNIQUE
+    role ENUM('user','admin') NOT NULL DEFAULT 'user'
 );
 
 -- ---------- homes ----------

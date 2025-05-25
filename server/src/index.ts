@@ -3,13 +3,17 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { join } from 'path'
 import { passport } from 'middleware'
+import authenticate from './middleware/authenticate';
+import isAdmin from './middleware/admin';
+
 import {
   authRouter,
   homesRouter,
   healthRouter,
   usersRouter,
   emailRouter,
-  commentRouter
+  commentRouter,
+  adminRouter
 } from 'routes'
 import { CLIENT_URL, PORT } from 'config'
 
@@ -47,6 +51,8 @@ app.use('/users', usersRouter)
 app.use('/email', emailRouter)
 // Comment CRUD routes
 app.use('/comments', commentRouter)
+
+app.use('/api/admin', authenticate, isAdmin, adminRouter)
 
 // Catch-all 404 for any unhandled routes
 app.use('*', (_req, res) => {

@@ -4,5 +4,6 @@ export { default as healthRouter } from './health';
 export { default as usersRouter } from './users';
 export { default as emailRouter } from './email';
 export { default as commentRouter } from './comment'
+export { default as adminRouter } from './admin';
 
 

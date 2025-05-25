@@ -76,7 +76,7 @@ homesRouter.post('/:id/comments', async (req, res) => {
   try {
     const homeId = Number(req.params.id)              // parse home ID
     const { text } = req.body                         // comment text
-    const userId = 27 // placeholder or use req.user?.id if auth applied
+    const userId = 41 // placeholder or use req.user?.id if auth applied
 
     const newCommentId = await createComment(
       { home_id: homeId, text },

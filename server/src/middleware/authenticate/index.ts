@@ -1,41 +1,36 @@
-import { NextFunction, Request, Response } from 'express'
-import { verifyToken } from '../../helpers/jwt'
-import { User } from '../../types'
+import { RequestHandler } from 'express';
+import { verifyToken } from '../../helpers/jwt';
+import { User } from '../../types';
 
-// Extend Express Request type to include `user` property
 declare global {
   namespace Express {
-    interface Request {
-      user?: User
-    }
+    interface Request { user?: User }
   }
 }
 
 /**
- * Middleware to protect routes by verifying JWT from cookies.
- * - Reads 'accessToken' cookie
- * - Verifies signature and expiration
- * - Attaches decoded user payload to req.user
- * - Rejects with 401 if no token or token is invalid
+ * Verify JWT stored in cookies to authenticate requests.
+ * On success, attach user object to req.user; on failure, respond with 401.
  */
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.cookies['accessToken']            // get JWT from cookie
-    if (!token) {
-      return res.status(401).json({ message: 'Token not provided' })
-    }
-
-    const user = verifyToken(token) as User            // decode & verify token
-    if (!user || !user.id) {
-      return res.status(401).json({ message: 'Invalid authentication token' })
-    }
-
-    req.user = user                                     // make user available downstream
-    next()                                              // proceed to next handler
-  } catch (error) {
-    console.error('Error while authenticating:', error)
-    res.status(401).json({ message: 'Invalid authentication token' })
+const authenticate: RequestHandler = (req, res, next) => {
+  const token = req.cookies['accessToken'];
+  if (!token) {
+    return res.status(401).json({ message: 'Token not provided' });
   }
-}
+  try {
+    // Decode and verify token signature
+    const user = verifyToken(token) as User;
+    if (!user?.id) {
+      return res.status(401).json({ message: 'Invalid authentication token' });
+    }
+    // Attach user data to the request for downstream handlers
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: 'Invalid authentication token' });
+  }
+};
 
-export default authenticate
+export default authenticate;
+  

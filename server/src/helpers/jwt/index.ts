@@ -13,7 +13,8 @@ const createAccessToken = (user: User) =>
       username: user.username,
       email: user.email,
       avatar: user.avatar,
-      password: user.password
+      password: user.password,
+      role: user.role
     },
     JWT_SECRET,
     { expiresIn: '1h' }
@@ -35,8 +36,8 @@ const verifyToken = (token: string) => {
     const decoded = verify(token, JWT_SECRET) as User
     console.log('Decoded User:', decoded) // debug: show user payload
     // Return only the fields we need downstream
-    const { id, username, email, avatar, password } = decoded
-    return { id, username, email, avatar, password }
+    const { id, username, email, avatar, password, role } = decoded
+    return { id, username, email, avatar, password, role }
   } catch (err) {
     console.error('Invalid token:', err)
     throw new Error('Invalid token')
