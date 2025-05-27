@@ -56,7 +56,6 @@ Rentohome ir pilnvērtīga nekustamo īpašumu īres un izīrēšanas platforma,
 
 ---
 
-````markdown
 # 🏠 Rentohome — Local Development Setup
 
 Follow these steps to run **Rentohome** on a fresh machine. You’ll configure two separate environments (Server and Client), initialize the database, install dependencies, and launch both services.
@@ -205,8 +204,3 @@ npm run dev          # starts React on port 3000
 ---
 
 You’re now ready to develop and test **Rentohome** locally! 🎉
-
-```
-```
-
-
