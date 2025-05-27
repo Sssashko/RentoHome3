@@ -89,7 +89,6 @@ cd rentohome
 Create a file at `server/.env` with:
 
 ```ini
-# server/.env
 PORT=4000
 SERVER_URL=http://localhost:4000
 CLIENT_URL=http://localhost:3000
@@ -114,7 +113,6 @@ SMTP_PASS=your_smtp_app_password
 Create a file at `client/.env` with:
 
 ```ini
-# client/.env
 VITE_PORT=3000
 VITE_SERVER_URL=http://localhost:4000
 ```
