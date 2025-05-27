@@ -8,7 +8,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     avatar VARCHAR(255),
     password VARCHAR(255),
-    google_id VARCHAR(255) UNIQUE
+    google_id VARCHAR(255) UNIQUE,
     role ENUM('user','admin') NOT NULL DEFAULT 'user'
 );
 
@@ -24,8 +24,7 @@ CREATE TABLE homes (
     description TEXT NOT NULL,
     likes INT NOT NULL DEFAULT 0,
     user_id INT NOT NULL,                         
-    FOREIGN KEY (user_id) REFERENCES users(id)        
-        ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- ---------- images ----------
@@ -46,8 +45,7 @@ CREATE TABLE refreshTokens (
     id INT PRIMARY KEY AUTO_INCREMENT,
     token TEXT NOT NULL,
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE                             
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE                             
 );
 
 -- ---------- comments ----------
@@ -57,10 +55,8 @@ CREATE TABLE comments (
     user_id INT NOT NULL,
     text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (home_id) REFERENCES homes(id)
-        ON DELETE CASCADE,                           
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE                             
+    FOREIGN KEY (home_id) REFERENCES homes(id) ON DELETE CASCADE,                           
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE                             
 );
 
 -- ---------- likes ----------

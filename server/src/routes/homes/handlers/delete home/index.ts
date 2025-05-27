@@ -10,7 +10,7 @@ const handleDeleteHome = async (req: Request, res: Response) => {
 
     // 1) remove all comments and likes for this home
     await pool.query('DELETE FROM comments WHERE home_id = ?', [id])
-    await pool.query('DELETE FROM likes    WHERE home_id = ?', [id])
+    await pool.query('DELETE FROM likes WHERE home_id = ?', [id])
 
     // 2) fetch and delete related image records & files
     const images = (await fetchRelatedImages(id)) || []  // array of URLs

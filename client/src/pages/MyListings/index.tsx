@@ -13,9 +13,15 @@ const MyListings = () => {
     <ProtectedPage>
       {/* wrap listings in flex container */}
       <div className="flex flex-wrap bg-gray-150 justify-center gap-5 p-8 dark:bg-gray-900">
-        {myListings.map(home => (
-          <Listing {...home} key={home.id} />
-        ))}
+        {myListings.length === 0 ? (
+          <p className="w-full text-center text-gray-900 dark:text-gray-300 text-2xl font-bold">
+            You haven’t posted any homes yet.
+          </p>
+        ) : (
+          myListings.map(home => (
+            <Listing {...home} key={home.id} />
+          ))
+        )}
       </div>
     </ProtectedPage>
   )

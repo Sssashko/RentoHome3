@@ -22,6 +22,10 @@ const app = express()
 // --- Middlewares ---
 // Parse JSON request bodies
 app.use(json())
+
+app.use(express.urlencoded({
+  extended: true,
+}))
 // Parse cookies from incoming requests
 app.use(cookieParser())
 // Enable CORS for our frontend origin and allow credentials

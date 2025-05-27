@@ -15,7 +15,7 @@ function App() {
   if (loading) return <AppLoader />; // show loader until ready
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-gray-800 dark:bg-neutral-800 dark:text-white transition-colors">
+    <div className="flex min-h-screen flex-col bg-white text-gray-800 dark:bg-gray-800 dark:text-white transition-colors">
       <Toaster position="top-center" />  {/* toast notifications */}
       <Navbar />                         {/* site header */}
       <ScrollToTop />                    {/* reset scroll on route change */}

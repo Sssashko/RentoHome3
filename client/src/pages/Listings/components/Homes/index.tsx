@@ -28,7 +28,7 @@ const Homes: React.FC = () => {
       try {
         const resp = await fetchUserLikes(currentUserId)
         if (resp.success && Array.isArray(resp.likes)) {
-          setLikedIds(resp.likes)
+          setLikedIds(Array.from(new Set(resp.likes)))
         }
       } catch {
         toast.error('Error loading likes')

@@ -60,6 +60,7 @@ export function useAdminData() {
    * @param id - ID of the user to update
    * @param data - Partial user fields to update
    */
+
   const updateUser = async (id: number, data: Partial<User>) => {
     const { data: updated } = await API.patch<User>(`/api/admin/users/${id}`, data)
     // Merge updated user into local state array

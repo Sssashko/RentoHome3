@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from 'store'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 // Define expected form fields
 type Data = {
@@ -22,6 +23,11 @@ const SignUp: React.FC = () => {
   const [file, setFile] = useState<File | null>(null)
   const [avatarError, setAvatarError] = useState(false)
 
+    // Password visibility toggles
+  const [showPassword, setShowPassword] = useState(false)            // toggle password field
+  const [showConfirm, setShowConfirm] = useState(false)              // toggle confirm field
+  const [showRules, setShowRules] = useState(false)
+
   // Initialize React Hook Form
   const {
     handleSubmit,
@@ -31,7 +37,6 @@ const SignUp: React.FC = () => {
   } = useForm<Data>({ mode: 'onSubmit' })
 
   // Watch password field to display live rules
-  const [showRules, setShowRules] = useState(false)
   const password = watch('password', '')
 
   // Password strength rules 
@@ -130,30 +135,40 @@ const SignUp: React.FC = () => {
 
           {/* Password field with live rule hints */}
           <div className="mb-5">
-            <input
-              type="password"
-              placeholder="Password"
-              {...register('password', {
-                required: "Password is required",
-                validate: val => {
-                  if (val.length < 8) return "8+ characters"
-                  if (!/\d/.test(val)) return "At least one number"
-                  if (!/[A-Za-z]/.test(val)) return "At least one letter"
-                  return true
-                }
-              })}
-              onFocus={() => setShowRules(true)}
-              onBlur={() => setShowRules(false)}
-              className={`w-full px-4 py-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500 transition-colors ${
-                errors.password
-                  ? 'border-red-500'
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                {...register('password', {
+                  required: "Password is required",
+                  validate: val => {
+                    if (val.length < 8) return "8+ characters"
+                    if (!/\d/.test(val)) return "At least one number"
+                    if (!/[A-Za-z]/.test(val)) return "At least one letter"
+                    return true
+                  }
+                })}
+                onFocus={() => setShowRules(true)}
+                onBlur={() => setShowRules(false)}
+                className={`w-full px-4 py-2 pr-10 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  errors.password
+                    ? 'border-red-500'
+                    : 'border-gray-300 dark:border-gray-600'
+                }`}
+              />
+              <span className="absolute inset-y-0 right-3 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <FaEyeSlash size={18}/> : <FaEye size={18}/>}
+                </button>
+              </span>
+            </div>
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
             )}
             {showRules && (
               <ul className="mt-2 text-sm space-y-1">
@@ -177,20 +192,32 @@ const SignUp: React.FC = () => {
 
           {/* Confirm Password field */}
           <div className="mb-5">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              {...register('confirmPassword', {
-                required: "Confirm your password",
-                validate: val =>
-                  val === watch('password') || "Passwords do not match"
-              })}
-              className={`w-full px-4 py-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500 transition-colors ${
-                errors.confirmPassword
-                  ? 'border-red-500'
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showConfirm ? 'text' : 'password'}
+                placeholder="Confirm Password"
+                {...register('confirmPassword', {
+                  required: "Confirm your password",
+                  validate: val =>
+                    val === watch('password') || "Passwords do not match"
+                })}
+                className={`w-full px-4 py-2 pr-10 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  errors.confirmPassword
+                    ? 'border-red-500'
+                    : 'border-gray-300 dark:border-gray-600'
+                }`}
+              />
+              <span className="absolute inset-y-0 right-3 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(v => !v)}
+                  className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  tabIndex={-1}
+                >
+                  {showConfirm ? <FaEyeSlash size={18}/> : <FaEye size={18}/>}
+                </button>
+              </span>
+            </div>
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.confirmPassword.message}

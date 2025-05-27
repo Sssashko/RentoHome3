@@ -14,6 +14,7 @@ interface Home {
   likes: number;            
   user: User;               // owner data
   images: Image[];          // image metadata array
+  owner: string | null
 }
 
 interface User {

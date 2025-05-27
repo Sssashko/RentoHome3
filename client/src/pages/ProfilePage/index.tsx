@@ -1,6 +1,7 @@
 import { useState } from 'react'                            
 import { useForm } from 'react-hook-form'                     
-import { useNavigate } from 'react-router-dom'                
+import { useNavigate } from 'react-router-dom'  
+import { FaEye, FaEyeSlash } from 'react-icons/fa'              
 import toast from 'react-hot-toast'
 
 import { useAuthStore } from 'store'                          
@@ -50,8 +51,9 @@ const ProfilePage = () => {
   })
 
   // 5) Password hints: track password field and show rules
-  const password = watch('password') ?? ''
+  const [showPassword, setShowPassword] = useState(false)
   const [showRules, setShowRules] = useState(false)
+  const password = watch('password') ?? ''
   const rules = [
     { label: '8+ characters',     valid: password.length >= 8 },
     { label: 'Contains a number', valid: /\d/.test(password) },
@@ -97,7 +99,7 @@ const ProfilePage = () => {
       formData.append('username', data.username)
       formData.append('email', data.email)
       if (data.password) formData.append('password', data.password)
-      if (file)         formData.append('avatar', file)
+      if (file) formData.append('avatar', file)
 
       // Perform API call to update profile
       const updated = await updateProfile(formData)
@@ -231,8 +233,10 @@ const ProfilePage = () => {
               <label className="block text-gray-700 dark:text-gray-300 mb-1">
                 New Password
               </label>
+              <div className="relative">
+
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Leave blank to keep current"
                 {...register('password', {
                   validate: val => {
@@ -245,13 +249,20 @@ const ProfilePage = () => {
                 })}
                 onFocus={() => setShowRules(true)}
                 onBlur={() => setShowRules(false)}
-                className="w-full px-3 py-2 border rounded-md bg-gray-100 dark:bg-gray-700"
+                className="w-full px-3 py-2 pr-10 border rounded-md bg-gray-100 dark:bg-gray-700"
               />
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.password.message}
-                </p>
-              )}
+            <span className="absolute inset-y-0 right-3 flex items-center">
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                tabIndex={-1}
+              >
+                {showPassword ? <FaEyeSlash size={18}/> : <FaEye size={18}/>}
+              </button>
+            </span>
+            </div>
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
               {showRules && (
                 <ul className="mt-2 text-xs space-y-1">
                   {rules.map(({ label, valid }) => (
@@ -289,7 +300,7 @@ const ProfilePage = () => {
           </h2>
           {userHomes.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userHomes.map(({ id, title, price, images, square }) => (
+              {userHomes.map(({ id, title, images }) => (
                 <div key={id} className="bg-white dark:bg-gray-700 rounded-2xl shadow-lg">
                   <img
                     src={images?.[0]?.url || '/default-home.jpg'}
@@ -298,11 +309,11 @@ const ProfilePage = () => {
                   />
                   <div className="p-4">
                     <h3 className="font-semibold text-lg">{title}</h3>
-                    <p className="mt-1">${price.toLocaleString()}</p>
-                    <p className="mt-1">{square} m²</p>
+                    {/* <p className="mt-1">${price.toLocaleString()}</p>
+                    <p className="mt-1">{square} m²</p> */}
                     <button
                       onClick={() => navigate(`/${id}`)}
-                      className="mt-3 w-full py-1 bg-blue-500 text-white rounded"
+                      className="mt-3 w-full py-1 rounded bg-blue-500 text-white transition-colors duration-200 hover:bg-blue-600"
                     >
                       View
                     </button>

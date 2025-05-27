@@ -8,6 +8,9 @@ import {
   handleDeleteAnyHome,
   handleUpdateAnyUser
 } from './handlers';
+import multer from 'multer';
+
+const upload = multer({ dest: './uploads/' });
 
 const adminRouter = Router();
 
@@ -16,7 +19,7 @@ adminRouter.use(authenticate, isAdmin);
 
 // User routes
 adminRouter.get('/users', handleListAllUsers);
-adminRouter.patch('/users/:id', handleUpdateAnyUser);
+adminRouter.patch('/users/:id', authenticate, isAdmin, upload.single('avatar'), handleUpdateAnyUser);
 adminRouter.delete('/users/:id', handleDeleteAnyUser);
 
 // Home routes

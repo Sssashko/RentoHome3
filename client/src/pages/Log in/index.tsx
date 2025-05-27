@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from 'store'
+import { useState } from 'react'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
+
 
 type Data = {
   email: string
@@ -13,6 +16,9 @@ type Data = {
 const LogIn = () => {
   const navigate = useNavigate()               // hook to programmatically change routes
   const { setUser } = useAuthStore()           // action to store authenticated user in global state
+
+  // toggle password visibility
+  const [showPass, setShowPass] = useState(false)
 
   // initialize react-hook-form
   const {
@@ -72,14 +78,26 @@ const LogIn = () => {
 
           {/* password input */}
           <div className="mb-5">
-            <input
-              type="password"
-              {...register('password', { required: true })}
-              placeholder="Password"
-              className={`w-full px-4 py-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500 transition-colors ${
-                errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPass ? 'text' : 'password'}
+                {...register('password', { required: true })}
+                placeholder="Password"
+                className={`w-full px-4 py-2 pr-10 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              />
+              <span className="absolute inset-y-0 right-3 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setShowPass(v => !v)}
+                  className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  tabIndex={-1}
+                >
+                  {showPass ? <FaEyeSlash size={18}/> : <FaEye size={18}/>}
+                </button>
+              </span>
+            </div>
           </div>
 
           {/* submit button */}
