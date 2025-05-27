@@ -56,5 +56,157 @@ Rentohome ir pilnvērtīga nekustamo īpašumu īres un izīrēšanas platforma,
 
 ---
 
-## 📂 Projekta struktūra
+````markdown
+# 🏠 Rentohome — Local Development Setup
+
+Follow these steps to run **Rentohome** on a fresh machine. You’ll configure two separate environments (Server and Client), initialize the database, install dependencies, and launch both services.
+
+---
+
+## 🔧 Prerequisites
+
+1. **Node.js & npm**  
+   Install from [nodejs.org](https://nodejs.org) (v16+ recommended).
+
+2. **MySQL**  
+   Install MySQL Community Server. Ensure you have a user with privileges to create databases.
+
+3. **Git**  
+   To clone the repository.
+
+---
+
+## 📥 1. Clone the Repository
+
+```bash
+git clone https://github.com/Sssashko/RentoHome3.git
+cd rentohome
+````
+
+---
+
+## ⚙️ 2. Environment Variables
+
+### 2.1 Server (`/server/.env`)
+
+Create a file at `server/.env` with:
+
+```ini
+# server/.env
+PORT=4000
+SERVER_URL=http://localhost:4000
+CLIENT_URL=http://localhost:3000
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=YOUR_DB_PASSWORD
+DB_NAME=rentohome
+
+JWT_SECRET=your_jwt_secret_here
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=youremail@gmail.com
+SMTP_PASS=your_smtp_app_password
+```
+
+> 🔑 **Replace** `YOUR_DB_PASSWORD`, and SMTP settings with your own values.
+
+### 2.2 Client (`/client/.env`)
+
+Create a file at `client/.env` with:
+
+```ini
+# client/.env
+VITE_PORT=3000
+VITE_SERVER_URL=http://localhost:4000
+```
+
+> If you’re using Create React App instead of Vite, name it `.env.local` and prefix with `REACT_APP_` instead of `VITE_`.
+
+---
+
+## 🗄️ 3. Database Initialization
+
+1. **Start MySQL** and log in:
+
+   ```bash
+   mysql -u root -p
+   ```
+
+2. **Create database & schema**:
+
+   ```sql
+   CREATE DATABASE IF NOT EXISTS rentohome
+     CHARACTER SET utf8mb4
+     COLLATE utf8mb4_unicode_ci;
+   USE rentohome;
+   SOURCE ./server/database/schema.sql;
+   EXIT;
+   ```
+
+> The file `server/database/schema.sql` contains all `CREATE TABLE` statements with `ON DELETE CASCADE`.
+
+---
+
+## 📦 4. Install Dependencies
+
+Open two terminals.
+
+### Terminal A: Server
+
+```bash
+cd server
+npm install
+```
+
+### Terminal B: Client
+
+```bash
+cd client
+npm install
+```
+
+---
+
+## 🚀 5. Run in Development
+
+### Server
+
+```bash
+# in terminal A
+cd server
+npm run dev          # starts Express on port 4000 with nodemon
+```
+
+### Client
+
+```bash
+# in terminal B
+cd client
+npm run dev          # starts React on port 3000
+```
+
+---
+
+## 🌐 6. Access the App
+
+* **Frontend** → [http://localhost:3000](http://localhost:3000)
+* **API Health Check** → [http://localhost:4000/health](http://localhost:4000/health)
+
+---
+
+## 📝 Tips & Troubleshooting
+
+* **CORS Errors**: Ensure `CLIENT_URL` in `server/.env` matches your React origin.
+* **Schema changes**: If you modify tables, re-run `schema.sql` or apply migrations.
+* **SMTP**: For email verification you must use app-passwords (Gmail) or valid SMTP credentials.
+
+---
+
+You’re now ready to develop and test **Rentohome** locally! 🎉
+
+```
+```
+
 
