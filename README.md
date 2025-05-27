@@ -193,8 +193,6 @@ npm run dev          # starts React on port 3000
 
 ## 📝 Tips & Troubleshooting
 
-* **CORS Errors**: Ensure `CLIENT_URL` in `server/.env` matches your React origin.
-* **Schema changes**: If you modify tables, re-run `schema.sql` or apply migrations.
 * **SMTP**: For email verification you must use app-passwords (Gmail) or valid SMTP credentials.
 
 ---
