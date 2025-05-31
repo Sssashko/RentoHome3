@@ -198,3 +198,68 @@ npm run dev          # starts React on port 3000
 ---
 
 You’re now ready to develop and test **Rentohome** locally! 🎉
+
+````markdown
+# 🚀 Quick Docker Setup for Rentohome
+
+These steps let anyone clone the repo and run MySQL + Express + React with a single command—no local Node/MySQL needed.
+
+---
+
+## 1. Prerequisites
+
+- **Docker & Docker Compose** installed and running.  
+  - Download Docker Desktop for your OS: https://www.docker.com/get-started
+
+---
+
+## 2. Clone Repo
+
+```bash
+git clone https://github.com/YourUsername/RentoHome3.git
+cd RentoHome3
+````
+
+---
+
+## 3. Run with Docker Compose
+
+From the project root (where `docker-compose.yml` lives), simply run:
+
+```bash
+docker-compose up --build
+```
+
+* This builds three services:
+
+  1. **MySQL** → database on host port 3307.
+  2. **Backend** (Express + TS) → listens on host port 4000.
+  3. **Frontend** (React + Vite) → listens on host port 3000.
+
+---
+
+## 4. Verify
+
+* **Frontend**: open [http://localhost:3000](http://localhost:3000)
+* **Backend health**: open [http://localhost:4000/health](http://localhost:4000/health) (should return `{"status":"OK"}`)
+* **MySQL** (if needed): connect on `127.0.0.1:3307` with user `root` / `root_pass`.
+
+---
+
+## 5. Stop & Clean Up
+
+```bash
+# Stop all containers and networks
+docker-compose down
+
+# (Optional) Also delete the MySQL data volume:
+docker-compose down -v
+```
+
+---
+
+That’s it—your friend can now just clone and run `docker-compose up --build` to launch Rentohome! 🎉
+
+```
+```
+
