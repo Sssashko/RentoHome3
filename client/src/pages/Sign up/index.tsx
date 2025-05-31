@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useAuthStore } from 'store'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 // Define expected form fields
@@ -17,15 +16,14 @@ type Data = {
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate()
-  const { setUser } = useAuthStore()
 
   // Local state for avatar file and validation flag
   const [file, setFile] = useState<File | null>(null)
   const [avatarError, setAvatarError] = useState(false)
 
-    // Password visibility toggles
-  const [showPassword, setShowPassword] = useState(false)            // toggle password field
-  const [showConfirm, setShowConfirm] = useState(false)              // toggle confirm field
+  // Password visibility toggles
+  const [showPassword, setShowPassword] = useState(false)    // toggle password field
+  const [showConfirm, setShowConfirm] = useState(false)      // toggle confirm field
   const [showRules, setShowRules] = useState(false)
 
   // Initialize React Hook Form
@@ -55,20 +53,25 @@ const SignUp: React.FC = () => {
     formData.append('username', data.username)
     formData.append('email', data.email)
     formData.append('password', data.password)
-    if (file) formData.append('avatar', file)
+    if (file) {
+      formData.append('avatar', file)
+    }
 
     // Show toast notifications for the sign-up request
-    toast.promise(signUpQuery(formData), {
-      loading: 'Signing up...',
-      success: () => {
-        navigate('/login')
-        return 'Account created. Please log in.'
-      },
-      error: e =>
-        isAxiosError(e) && e.response?.status === 409
-          ? 'User with this email already exists!'
-          : 'Error while trying to sign up'
-    })
+    toast.promise(
+      signUpQuery(formData),
+      {
+        loading: 'Signing up...',
+        success: () => {
+          navigate('/login')
+          return 'Account created. Please log in.'
+        },
+        error: e =>
+          isAxiosError(e) && e.response?.status === 409
+            ? 'User with this email already exists!'
+            : 'Error while trying to sign up'
+      }
+    )
   }
 
   return (
@@ -82,7 +85,8 @@ const SignUp: React.FC = () => {
           Sign up to explore more features
         </p>
 
-        <form onSubmit={handleSubmit(submit)}>
+        {/* Add noValidate to prevent the browser's built-in “tooltip” */}
+        <form noValidate onSubmit={handleSubmit(submit)}>
           {/* Username field */}
           <div className="mb-5">
             <input
@@ -179,9 +183,7 @@ const SignUp: React.FC = () => {
                         valid ? 'bg-green-500' : 'bg-red-500'
                       }`}
                     />
-                    <span
-                      className={valid ? 'text-green-600' : 'text-red-600'}
-                    >
+                    <span className={valid ? 'text-green-600' : 'text-red-600'}>
                       {label}
                     </span>
                   </li>
@@ -226,7 +228,7 @@ const SignUp: React.FC = () => {
           </div>
 
           {/* Avatar upload area */}
-          <label className="w-full mb-6 flex flex-col items-center justify-center px-6 py-4 border-2 border-dashed rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-pointer hover:border-blue-500 transition">
+          <label className="w-full mb-1 flex flex-col items-center justify-center px-6 py-4 border-2 border-dashed rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-pointer hover:border-blue-500 transition">
             {file ? (
               // Show preview if file selected
               <div className="flex items-center space-x-4">
@@ -265,22 +267,38 @@ const SignUp: React.FC = () => {
               hidden
               onChange={e => {
                 const sel = e.target.files?.[0]
-                if (!sel) return setFile(null)
+                if (!sel) {
+                  setFile(null)
+                  setAvatarError(false)
+                  return
+                }
                 // Validate file type
                 if (!['image/png','image/jpeg','image/jpg'].includes(sel.type)) {
-                  toast.error("Only JPG, JPEG, PNG allowed")
-                  return setFile(null)
+                  setFile(null)
+                  setAvatarError(true)
+                  return
                 }
                 // Validate size <2MB
                 if (sel.size > 2 * 1024 * 1024) {
-                  toast.error("Image must be <2MB")
-                  return setFile(null)
+                  setFile(null)
+                  setAvatarError(true)
+                  return
                 }
                 setFile(sel)
                 setAvatarError(false)
               }}
             />
           </label>
+
+          {/* Inline avatar‐error text (directly under avatar drop area) */}
+          {avatarError && (
+            <p className="text-red-500 text-sm mt-1 mb-4">
+              Invalid avatar file. Only JPG/PNG under 2 MB allowed.
+            </p>
+          )}
+
+          {/* If no avatarError, add some bottom margin before the Sign Up button */}
+          {!avatarError && <div className="mb-6" />}
 
           {/* Sign Up button */}
           <button

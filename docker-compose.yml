@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  # 1) MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: rentohome-db
+    restart: unless-stopped
+    environment:
+      # Credentials for the MySQL container
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: rentohome
+      MYSQL_USER: root
+      MYSQL_PASSWORD: prizma12
+    ports:
+      # Map host port 3307 to container’s 3306, in case your local machine already has MySQL on 3306.
+      - "3307:3306"
+    volumes:
+      # Persist database files on host so data survives container restarts
+      - db_data:/var/lib/mysql
+
+  # 2) Backend (Express + TypeScript)
+  server:
+    container_name: rentohome-server
+    build:
+      context: ./server       # Look inside the ./server folder for the Dockerfile
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/.env.docker  # Use the Docker-specific ENV (connects to mysql service)
+    depends_on:
+      - mysql                 # Ensure MySQL starts before backend
+    ports:
+      - "4000:4000"           # Map host port 4000 to container port 4000
+    restart: unless-stopped
+
+  # 3) Frontend (React + Vite)
+  client:
+    container_name: rentohome-client
+    build:
+      context: ./client       # Look inside the ./client folder for its Dockerfile
+      dockerfile: Dockerfile
+    env_file:
+      - ./client/.env         # Vite picks up VITE_SERVER_URL
+    depends_on:
+      - server                # Wait for backend to be ready
+    ports:
+      - "3000:3000"           # Map host port 3000 to container port 3000
+    restart: unless-stopped
+
+volumes:
+  db_data:

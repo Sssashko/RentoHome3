@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.adminRouter = exports.commentRouter = exports.emailRouter = exports.usersRouter = exports.healthRouter = exports.authRouter = exports.homesRouter = void 0;
+var homes_1 = require("./homes");
+Object.defineProperty(exports, "homesRouter", { enumerable: true, get: function () { return __importDefault(homes_1).default; } });
+var auth_1 = require("./auth");
+Object.defineProperty(exports, "authRouter", { enumerable: true, get: function () { return __importDefault(auth_1).default; } });
+var health_1 = require("./health");
+Object.defineProperty(exports, "healthRouter", { enumerable: true, get: function () { return __importDefault(health_1).default; } });
+var users_1 = require("./users");
+Object.defineProperty(exports, "usersRouter", { enumerable: true, get: function () { return __importDefault(users_1).default; } });
+var email_1 = require("./email");
+Object.defineProperty(exports, "emailRouter", { enumerable: true, get: function () { return __importDefault(email_1).default; } });
+var comment_1 = require("./comment");
+Object.defineProperty(exports, "commentRouter", { enumerable: true, get: function () { return __importDefault(comment_1).default; } });
+var admin_1 = require("./admin");
+Object.defineProperty(exports, "adminRouter", { enumerable: true, get: function () { return __importDefault(admin_1).default; } });

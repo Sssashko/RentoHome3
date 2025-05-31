@@ -33,6 +33,8 @@ app.use(cors({ origin: CLIENT_URL, credentials: true }))
 // Initialize passport for OAuth flows (if used)
 app.use(passport.initialize())
 
+app.use(express.static(join(__dirname, 'public')))
+
 // --- Static file serving ---
 // Serve uploaded images from server/images under the /images URL path
 app.use('/images', express.static(join(__dirname, '..', 'images')))
