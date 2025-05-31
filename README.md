@@ -191,8 +191,6 @@ This will start:
 
 Hello, world!
 
-```
-```
 
 
 3. **MySQL (optional)**
