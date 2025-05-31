@@ -82,12 +82,6 @@ VITE_SERVER_URL=http://localhost:4000
 VITE_GOOGLE_AUTH=http://localhost:4000/auth/google
 ```
 
-> **Why?**
->
-> * `VITE_PORT`: Port for your React/Vite dev server (3000).
-> * `VITE_SERVER_URL`: Backend API base URL.
-> * `VITE_GOOGLE_AUTH`: Google OAuth callback URL.
-
 ### 2.2 Backend (Local Dev) (`/server/.env`)
 
 Create `server/.env` and paste:
@@ -114,10 +108,6 @@ SMTP_PORT=587
 SMTP_USER=rentohomecontact@gmail.com
 SMTP_PASS=iaze tjqk bsqe ksme
 ```
-
-> **Why?**
->
-> * `DATABASE_HOST=localhost` so your backend can connect to a local MySQL when you run without Docker.
 
 ### 2.3 Backend (Docker) (`/server/.env.docker`)
 
@@ -149,10 +139,6 @@ SMTP_PORT=587
 SMTP_USER=rentohomecontact@gmail.com
 SMTP_PASS=iaze tjqk bsqe ksme
 ```
-
-> **Why?**
->
-> * `DATABASE_HOST=mysql` so the backend container connects to the “mysql” service inside Docker.
 
 ---
 
