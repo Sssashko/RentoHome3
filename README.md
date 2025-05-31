@@ -71,7 +71,7 @@ This guide shows how anyone can clone the repository from GitHub and launch the 
    ```bash
    docker --version
    docker-compose --version
-````
+
 
 ---
 
