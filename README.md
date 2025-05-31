@@ -199,12 +199,10 @@ npm run dev          # starts React on port 3000
 
 You’re now ready to develop and test **Rentohome** locally! 🎉
 
-````markdown
+
 # 🚀 Quick Docker Setup for Rentohome
 
 These steps let anyone clone the repo and run MySQL + Express + React with a single command—no local Node/MySQL needed.
-
----
 
 ## 1. Prerequisites
 
