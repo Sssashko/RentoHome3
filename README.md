@@ -191,16 +191,6 @@ This will start:
 
 Hello, world!
 
-
-
-3. **MySQL (optional)**
-
-   ```bash
-   mysql -h 127.0.0.1 -P 3307 -u root -p
-   # Enter password: root_pass
-   SHOW DATABASES;  # "rentohome" should appear
-   ```
-
 ---
 
 ## 5. Stop & Remove Containers
