@@ -56,63 +56,188 @@ Rentohome ir pilnvērtīga nekustamo īpašumu īres un izīrēšanas platforma,
 ---
 
 
-# 🚀 Quick Docker Setup for Rentohome
+````markdown
+# 🚀 Quick Start: Run RentoHome via Docker
 
-These steps let anyone clone the repo and run MySQL + Express + React with a single command—no local Node/MySQL needed.
-
-## 1. Prerequisites
-
-- **Docker & Docker Compose** installed and running.  
-  - Download Docker Desktop for your OS: https://www.docker.com/get-started
+This guide shows how anyone can clone the repository from GitHub and launch the entire stack (MySQL, Backend, Frontend) with Docker. Environment files (`.env`) are **not** included in the repo; you must create them before starting.
 
 ---
 
-## 2. Clone Repo
+## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Sssashko/RentoHome3.git
+git clone https://github.com/YourUsername/RentoHome3.git
 cd RentoHome3
 ````
 
 ---
-## 3. Run with Docker Compose
 
-From the project root (where `docker-compose.yml` lives), simply run:
+## 2. Create Environment Files
+
+### 2.1 Frontend (`/client/.env`)
+
+Create `client/.env` and paste:
+
+```ini
+VITE_PORT=3000
+VITE_SERVER_URL=http://localhost:4000
+VITE_GOOGLE_AUTH=http://localhost:4000/auth/google
+```
+
+> **Why?**
+>
+> * `VITE_PORT`: Port for your React/Vite dev server (3000).
+> * `VITE_SERVER_URL`: Backend API base URL.
+> * `VITE_GOOGLE_AUTH`: Google OAuth callback URL.
+
+### 2.2 Backend (Local Dev) (`/server/.env`)
+
+Create `server/.env` and paste:
+
+```ini
+PORT=4000
+
+SERVER_URL=http://localhost:4000
+CLIENT_URL=http://localhost:3000
+
+DATABASE_HOST=localhost
+DATABASE_USER=root
+DATABASE_PASSWORD=prizma12
+DATABASE_NAME=rentohome
+
+GOOGLE_CLIENT_ID=843413896856-o3knsirjcfpun6imo8hldi7qlvvm02tl.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-bsYeLThmmnWj_w-808CWdiD-02d
+
+JWT_SECRET=g)PZ%.Z]h757/X%%>P
+
+# Email SMTP Configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=rentohomecontact@gmail.com
+SMTP_PASS=iaze tjqk bsqe ksme
+```
+
+> **Why?**
+>
+> * `DATABASE_HOST=localhost` so your backend can connect to a local MySQL when you run without Docker.
+
+### 2.3 Backend (Docker) (`/server/.env.docker`)
+
+Create `server/.env.docker` and paste:
+
+```ini
+# When running inside Docker, "mysql" resolves to the MySQL service
+DATABASE_HOST=mysql
+DATABASE_USER=root
+DATABASE_PASSWORD=prizma12
+DATABASE_NAME=rentohome
+
+# Port Express listens on inside the container
+PORT=4000
+
+# For CORS in backend
+CLIENT_URL=http://localhost:3000
+SERVER_URL=http://localhost:4000
+
+# OAuth / JWT / SMTP (same as local .env)
+GOOGLE_CLIENT_ID=843413896856-o3knsirjcfpun6imo8hldi7qlvvm02tl.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-bsYeLThmmnWj_w-808CWdiD-02d
+
+JWT_SECRET=g)PZ%.Z]h757/X%%>P
+
+# Email SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=rentohomecontact@gmail.com
+SMTP_PASS=iaze tjqk bsqe ksme
+```
+
+> **Why?**
+>
+> * `DATABASE_HOST=mysql` so the backend container connects to the “mysql” service inside Docker.
+
+---
+
+## 3. Run Everything with Docker Compose
+
+In the project root, run:
 
 ```bash
 docker-compose up --build
 ```
 
-* This builds three services:
+This will start:
 
-  1. **MySQL** → database on host port 3307.
-  2. **Backend** (Express + TS) → listens on host port 4000.
-  3. **Frontend** (React + Vite) → listens on host port 3000.
+1. **MySQL** (host port 3307 → container 3306)
+2. **Backend** (Express + TypeScript, port 4000)
+3. **Frontend** (Vite React, port 3000)
 
----
-
-## 4. Verify
-
-* **Frontend**: open [http://localhost:3000](http://localhost:3000)
-* **Backend health**: open [http://localhost:4000/health](http://localhost:4000/health) (should return `{"status":"OK"}`)
-* **MySQL** (if needed): connect on `127.0.0.1:3307` with user `root` / `root_pass`.
+> **Note:**
+>
+> * MySQL data is stored in a named volume `db_data`, so it persists after restarts.
+> * If you already have MySQL on port 3306, the container’s port 3306 is mapped to your host’s port 3307.
 
 ---
 
-## 5. Stop & Clean Up
+## 4. Verify the Setup
+
+1. **Frontend**
+   Open [http://localhost:3000](http://localhost:3000) in your browser. You should see the React application.
+
+2. **Backend Health Check**
+   Open [http://localhost:4000/health](http://localhost:4000/health).
+   Expected response:
+
+   ```json
+   { "status": "OK" }
+   ```
+
+3. **MySQL (optional)**
+
+   ```bash
+   mysql -h 127.0.0.1 -P 3307 -u root -p
+   # Enter password: root_pass
+   SHOW DATABASES;  # "rentohome" should appear
+   ```
+
+---
+
+## 5. Stop & Remove Containers
+
+To stop and remove containers and networks, run:
 
 ```bash
-# Stop all containers and networks
 docker-compose down
+```
 
-# (Optional) Also delete the MySQL data volume:
+To also delete the MySQL data volume, add `-v`:
+
+```bash
 docker-compose down -v
 ```
 
 ---
 
-That’s it—your friend can now just clone and run `docker-compose up --build` to launch Rentohome! 🎉
+## 6. Sharing This Project
 
-```
-```
+* Do **not** commit real `.env` files to GitHub. Instead, commit templates like:
 
+  ```
+  client/.env.example
+  server/.env.example
+  server/.env.docker.example
+  ```
+
+  Users can then copy `*.example` → `*.env` and fill in their own values.
+
+* Anyone with Docker installed (download at [https://www.docker.com/get-started](https://www.docker.com/get-started)) can clone your repo, create the `.env` files, and immediately run:
+
+  ```bash
+  docker-compose up --build
+  ```
+
+  to get the full application running in minutes.
+
+---
+
+**You’re all set!** 🎉 Now others can quickly launch RentoHome with a single `docker-compose` command. \`\`\`
