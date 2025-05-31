@@ -61,12 +61,26 @@ This guide shows how anyone can clone the repository from GitHub and launch the 
 
 ---
 
+## 🐳 Prerequisites
+
+1. **Install Docker & Docker Compose**  
+   - Download and install Docker Desktop (which includes Docker Compose) from  
+     [https://www.docker.com/get-started](https://www.docker.com/get-started).  
+   - Verify installation:
+
+   ```bash
+   docker --version
+   docker-compose --version
+````
+
+---
+
 ## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Sssashko/RentoHome3.git
 cd RentoHome3
-````
+```
 
 ---
 
@@ -202,26 +216,5 @@ docker-compose down -v
 
 ---
 
-## 6. Sharing This Project
-
-* Do **not** commit real `.env` files to GitHub. Instead, commit templates like:
-
-  ```
-  client/.env.example
-  server/.env.example
-  server/.env.docker.example
-  ```
-
-  Users can then copy `*.example` → `*.env` and fill in their own values.
-
-* Anyone with Docker installed (download at [https://www.docker.com/get-started](https://www.docker.com/get-started)) can clone your repo, create the `.env` files, and immediately run:
-
-  ```bash
-  docker-compose up --build
-  ```
-
-  to get the full application running in minutes.
-
----
-
 **You’re all set!** 🎉 Now others can quickly launch RentoHome with a single `docker-compose` command. \`\`\`
+
