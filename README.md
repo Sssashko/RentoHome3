@@ -66,7 +66,7 @@ This guide shows how anyone can clone the repository from GitHub and launch the 
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YourUsername/RentoHome3.git
+git clone https://github.com/Sssashko/RentoHome3.git
 cd RentoHome3
 ````
 
