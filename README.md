@@ -182,13 +182,18 @@ This will start:
 1. **Frontend**
    Open [http://localhost:3000](http://localhost:3000) in your browser. You should see the React application.
 
-2. **Backend Health Check**
-   Open [http://localhost:4000/health](http://localhost:4000/health).
+```markdown
+2. **Backend Health Check**  
+   Open [http://localhost:4000](http://localhost:4000).  
    Expected response:
 
-   ```json
-   { "status": "OK" }
-   ```
+```
+
+Hello, world!
+
+```
+```
+
 
 3. **MySQL (optional)**
 
