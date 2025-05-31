@@ -60,14 +60,14 @@ app.use('/comments', commentRouter)
 
 app.use('/api/admin', authenticate, isAdmin, adminRouter)
 
+// Optional root endpoint (will respond to GET /)
+app.get('/', (_req, res) => {
+  res.send('<h1>Hello, world!</h1>')
+})
+
 // Catch-all 404 for any unhandled routes
 app.use('*', (_req, res) => {
   res.status(404).json({ message: 'Not found' })
-})
-
-// Optional root endpoint
-app.use('/', (_req, res) => {
-  res.send('<h1>Hello, world!</h1>')
 })
 
 // Start HTTP server

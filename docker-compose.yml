@@ -1,51 +1,62 @@
 version: "3.8"
 
 services:
-  # 1) MySQL Database
+  # 1) MySQL in Docker
   mysql:
     image: mysql:8.0
     container_name: rentohome-db
     restart: unless-stopped
     environment:
-      # Credentials for the MySQL container
+      # Root password for MySQL server
       MYSQL_ROOT_PASSWORD: root_pass
+      # Create a database named “rentohome”
       MYSQL_DATABASE: rentohome
+      # Create a user “root” with the password below
       MYSQL_USER: root
       MYSQL_PASSWORD: prizma12
     ports:
-      # Map host port 3307 to container’s 3306, in case your local machine already has MySQL on 3306.
+      # Map host port 3307 → container port 3306
       - "3307:3306"
     volumes:
-      # Persist database files on host so data survives container restarts
+      # Persist MySQL data on the host so data survives restarts
       - db_data:/var/lib/mysql
 
   # 2) Backend (Express + TypeScript)
   server:
     container_name: rentohome-server
     build:
-      context: ./server       # Look inside the ./server folder for the Dockerfile
+      # Look for the Dockerfile inside ./server folder
+      context: ./server
       dockerfile: Dockerfile
+    # Use .env.docker inside the server folder (configured to connect to “mysql” service)
     env_file:
-      - ./server/.env.docker  # Use the Docker-specific ENV (connects to mysql service)
+      - ./server/.env.docker
     depends_on:
-      - mysql                 # Ensure MySQL starts before backend
+      # Ensure MySQL service is running before starting the backend
+      - mysql
     ports:
-      - "4000:4000"           # Map host port 4000 to container port 4000
+      # Expose container port 4000 → host port 4000
+      - "4000:4000"
     restart: unless-stopped
 
   # 3) Frontend (React + Vite)
   client:
     container_name: rentohome-client
     build:
-      context: ./client       # Look inside the ./client folder for its Dockerfile
+      # Look for the Dockerfile inside ./client folder
+      context: ./client
       dockerfile: Dockerfile
+    # Load environment variables for the frontend (e.g. VITE_SERVER_URL)
     env_file:
-      - ./client/.env         # Vite picks up VITE_SERVER_URL
+      - ./client/.env
     depends_on:
-      - server                # Wait for backend to be ready
+      # Wait for backend service to be ready first
+      - server
     ports:
-      - "3000:3000"           # Map host port 3000 to container port 3000
+      # Expose container port 3000 → host port 3000
+      - "3000:3000"
     restart: unless-stopped
 
 volumes:
+  # Named volume for persisting MySQL data
   db_data:
