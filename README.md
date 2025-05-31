@@ -55,8 +55,6 @@ Rentohome ir pilnvērtīga nekustamo īpašumu īres un izīrēšanas platforma,
    – Sludinājumu dzēšana un pārskatīšana.
 ---
 
-
-````markdown
 # 🚀 Quick Start: Run RentoHome via Docker
 
 This guide shows how anyone can clone the repository from GitHub and launch the entire stack (MySQL, Backend, Frontend) with Docker. Environment files (`.env`) are **not** included in the repo; you must create them before starting.
