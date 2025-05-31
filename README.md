@@ -214,7 +214,7 @@ These steps let anyone clone the repo and run MySQL + Express + React with a sin
 ## 2. Clone Repo
 
 ```bash
-git clone https://github.com/YourUsername/RentoHome3.git
+git clone https://github.com/Sssashko/RentoHome3.git
 cd RentoHome3
 ````
 
