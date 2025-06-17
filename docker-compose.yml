@@ -7,21 +7,17 @@ services:
     container_name: rentohome-db
     restart: unless-stopped
     environment:
-      # Root password for MySQL server
-      MYSQL_ROOT_PASSWORD: root_pass
-      # Create a database named “rentohome”
+      MYSQL_ROOT_PASSWORD: prizma12
       MYSQL_DATABASE: rentohome
-      # Create a user “root” with the password below
-      MYSQL_USER: root
-      MYSQL_PASSWORD: prizma12
     ports:
       # Map host port 3307 → container port 3306
       - "3307:3306"
     volumes:
       # Persist MySQL data on the host so data survives restarts
+      - ./clean_dump.sql:/docker-entrypoint-initdb.d/dump.sql
       - db_data:/var/lib/mysql
 
-  # 2) Backend (Express + TypeScript)
+  # 2) Backend (Express + TypeScript)s
   server:
     container_name: rentohome-server
     build:

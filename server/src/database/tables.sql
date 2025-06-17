@@ -1,4 +1,4 @@
-CREATE DATABASE rentohome DEFAULT CHARACTER SET utf8;
+
 USE rentohome;
 
 -- ---------- users ----------
@@ -23,8 +23,8 @@ CREATE TABLE homes (
     country VARCHAR(50) NOT NULL,
     description TEXT NOT NULL,
     likes INT NOT NULL DEFAULT 0,
-    user_id INT NOT NULL,                         
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    user INT NOT NULL,                         
+    FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- ---------- images ----------
@@ -44,8 +44,8 @@ CREATE TABLE images (
 CREATE TABLE refreshTokens (
     id INT PRIMARY KEY AUTO_INCREMENT,
     token TEXT NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE                             
+    user INT NOT NULL,
+    FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE                           
 );
 
 -- ---------- comments ----------

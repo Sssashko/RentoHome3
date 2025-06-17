@@ -5,8 +5,8 @@ import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } from 'config'
 // configure Nodemailer transporter using SMTP credentials
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,               // your SMTP server address
-  port: Number(SMTP_PORT),       // SMTP port (e.g. 587)
-  secure: false,                 // use TLS? false = STARTTLS
+  port: Number(SMTP_PORT),       // SMTP port (e.g. 435)
+  secure: false,               // use TLS? false = STARTTLS
   auth: {
     user: SMTP_USER,             // SMTP login user
     pass: SMTP_PASS,             // SMTP login password
