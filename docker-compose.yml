@@ -54,7 +54,7 @@ services:
       - server
     ports:
       # Expose container port 3000 → host port 3000
-      - "3000:3000"
+      - "3001:3000"
     restart: unless-stopped
 
 volumes:

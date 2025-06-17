@@ -3,25 +3,32 @@ import { NavLink } from 'react-router-dom'
 import { FaHeart } from 'react-icons/fa'
 import toast from 'react-hot-toast'
 import useFilteredHomes from 'hooks/useFilteredHomes'
+import useAllHomes from 'hooks/useAllHomes'
 import { likeHomeQuery } from 'api/homes'
 import fetchUserLikes from 'api/homes/fetch likes'
 import { useAuthStore } from 'store'
 import { Home } from 'types'
 
 const Homes: React.FC = () => {
-  // get filtered homes from custom hook
-  const homes = useFilteredHomes()
-  const [localHomes, setLocalHomes] = useState<Home[]>(homes)
-  const [likedIds, setLikedIds] = useState<number[]>([])
+  // 1) Authorization: retrieve current user
   const { user } = useAuthStore()
   const currentUserId = user?.id
 
-  // update localHomes when filters change
+  // 2) Get filtered homes from custom hook
+  const homes = useFilteredHomes()
+
+  // 3) Keep a local copy so we can update like counts without refetching filters
+  const [localHomes, setLocalHomes] = useState<Home[]>(homes)
+
+  // 4) Store IDs of homes the user has liked
+  const [likedIds, setLikedIds] = useState<number[]>([])
+
+  // 5) Update localHomes when filters change
   useEffect(() => {
     setLocalHomes(homes)
   }, [homes])
 
-  // fetch liked home IDs for the current user
+  // 6) Fetch liked home IDs for the current user
   useEffect(() => {
     if (!currentUserId) return
     ;(async () => {
@@ -36,19 +43,23 @@ const Homes: React.FC = () => {
     })()
   }, [currentUserId])
 
-  // sort homes by likes descending
-  const sortedHomes = useMemo(
-    () => [...localHomes].sort((a, b) => b.likes - a.likes),
-    [localHomes]
-  )
+  // 7) Determine top-3 across the entire dataset (not just filtered)
+  const allHomes = useAllHomes()
+  const top3Map = useMemo(() => {
+    return new Map(
+      [...allHomes]
+        .sort((a, b) => b.likes - a.likes)
+        .slice(0, 3)
+        .map((h, i) => [h.id, i + 1])
+    )
+  }, [allHomes])
 
-  // get ranking (TOP 1–3) based on sorted position
+  // 8) Get ranking (TOP 1–3) based on global likes
   const getRank = (id: number) => {
-    const idx = sortedHomes.findIndex(h => h.id === id)
-    return idx >= 0 && idx < 3 ? idx + 1 : null
+    return top3Map.get(id) ?? null
   }
 
-  // toggle like on a home
+  // 9) Toggle like on a home
   const handleLike = async (homeId: number) => {
     const isLiked = likedIds.includes(homeId)
     try {
@@ -69,6 +80,7 @@ const Homes: React.FC = () => {
     }
   }
 
+  // 10) If no homes match filters, show a friendly message
   if (!localHomes.length) {
     return (
       <h1 className="mx-auto mt-10 p-4 text-center text-2xl font-bold text-gray-800 dark:text-white">
@@ -77,6 +89,7 @@ const Homes: React.FC = () => {
     )
   }
 
+  // 11) Render grid of homes
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 mt-6">
       {localHomes.map(home => {
